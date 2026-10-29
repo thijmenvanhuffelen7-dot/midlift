@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Midlift",
+    "slug": "midlift",
+    "version": "0.1.0",
+    "scheme": "midlift",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yourname.midlift"
+    },
+    "android": {
+      "package": "com.yourname.midlift"
+    },
+    "plugins": ["expo-router", "expo-localization"],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
