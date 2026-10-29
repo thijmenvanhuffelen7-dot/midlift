@@ -13,9 +13,17 @@
     "android": {
       "package": "com.yourname.midlift"
     },
-    "plugins": ["expo-router", "expo-localization"],
+    "plugins": [
+      "expo-router",
+      "expo-localization"
+    ],
     "experiments": {
       "typedRoutes": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d5203d36-e741-4698-8909-56cf477ee8b4"
+      }
     }
   }
 }
