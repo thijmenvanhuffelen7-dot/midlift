@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n, { deviceLanguage, Lang } from './i18n';
 import type { Activity, FoodGoal } from './logic/nutrition';
+import type { ThemePref } from './theme';
 
 export type Profile = {
   lang: Lang;
@@ -11,9 +12,10 @@ export type Profile = {
   activity: Activity;
   goal: FoodGoal;
   hideCalories: boolean;
+  theme: ThemePref;
 };
 
-export type LoggedSet = { exerciseId: string; weight: number; reps: number };
+export type LoggedSet = { exerciseId: string; weight: number; reps: number; warmup?: boolean };
 export type Session = {
   id: string;
   date: string;
@@ -22,6 +24,10 @@ export type Session = {
   sets: LoggedSet[];
   /** workout length; missing on sessions saved before this was tracked */
   durationSec?: number;
+  /** personal records set in this session */
+  records?: { exerciseId: string; weight: number; reps: number }[];
+  /** notes per exercise */
+  notes?: Record<string, string>;
 };
 export type FoodEntry = { id: string; date: string; name: string; grams: number; kcal: number; protein: number };
 
@@ -38,6 +44,7 @@ const initialState: State = {
     activity: 1,
     goal: 'maintain',
     hideCalories: false,
+    theme: 'dark',
   },
   sessions: [],
   food: [],
@@ -46,7 +53,7 @@ const initialState: State = {
 type Store = State & {
   ready: boolean;
   updateProfile: (patch: Partial<Profile>) => void;
-  addSession: (s: Omit<Session, 'id'>) => void;
+  addSession: (s: Omit<Session, 'id'>) => string;
   addFood: (f: Omit<FoodEntry, 'id'>) => void;
   removeFood: (id: string) => void;
 };
@@ -97,7 +104,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setState((s) => ({ ...s, profile: { ...s.profile, ...patch } }));
   }, []);
   const addSession = useCallback((sess: Omit<Session, 'id'>) => {
-    setState((s) => ({ ...s, sessions: [{ ...sess, id: newId() }, ...s.sessions] }));
+    const id = newId();
+    setState((s) => ({ ...s, sessions: [{ ...sess, id }, ...s.sessions] }));
+    return id;
   }, []);
   const addFood = useCallback((f: Omit<FoodEntry, 'id'>) => {
     setState((s) => ({ ...s, food: [{ ...f, id: newId() }, ...s.food] }));
@@ -121,10 +130,10 @@ export function useStore(): Store {
   return v;
 }
 
-/** Sets from the most recent session that included this exercise. */
+/** Working sets (no warm-ups) from the most recent session that included this exercise. */
 export function lastSetsFor(sessions: Session[], exerciseId: string): LoggedSet[] | undefined {
   for (const s of sessions) {
-    const sets = s.sets.filter((x) => x.exerciseId === exerciseId);
+    const sets = s.sets.filter((x) => x.exerciseId === exerciseId && !x.warmup);
     if (sets.length) return sets;
   }
   return undefined;

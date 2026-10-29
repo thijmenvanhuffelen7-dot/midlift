@@ -84,3 +84,55 @@ test('dates: week starts on Monday', () => {
   const sun = new Date(2026, 10, 1, 12, 0); // Sun 1 Nov 2026
   assert.equal(dayKey(startOfWeek(sun)), '2026-10-26');
 });
+
+// --- stats: records, charts, calendar ---
+import { bestWeight, clock, exerciseSeries, isNewRecord, monthGrid, records, volume } from '../src/logic/stats';
+
+const history = [
+  { date: '2026-10-01T18:00:00.000Z', sets: [
+    { exerciseId: 'goblet_squat', weight: 6, reps: 10, warmup: true },
+    { exerciseId: 'goblet_squat', weight: 10, reps: 10 },
+    { exerciseId: 'goblet_squat', weight: 10, reps: 8 },
+  ] },
+  { date: '2026-10-08T18:00:00.000Z', sets: [
+    { exerciseId: 'goblet_squat', weight: 12, reps: 10 },
+    { exerciseId: 'glute_bridge', weight: 16, reps: 12 },
+  ] },
+];
+
+test('clock formats minutes and seconds', () => {
+  assert.equal(clock(84), '1:24');
+  assert.equal(clock(5), '0:05');
+  assert.equal(clock(-3), '0:00');
+});
+
+test('best weight and records ignore warm-up sets', () => {
+  assert.equal(bestWeight(history, 'goblet_squat'), 12);
+  assert.equal(bestWeight([{ date: 'x', sets: [{ exerciseId: 'rdl', weight: 20, reps: 5, warmup: true }] }], 'rdl'), 0);
+  assert.equal(isNewRecord(12, 14), true);
+  assert.equal(isNewRecord(12, 12), false);
+  assert.equal(isNewRecord(0, 8), false); // first time is not a record
+});
+
+test('volume counts working sets only', () => {
+  assert.equal(volume(history[0].sets), 180);
+});
+
+test('series is one point per session, oldest first', () => {
+  const reversed = [...history].reverse();
+  assert.deepEqual(exerciseSeries(reversed, 'goblet_squat', 'heaviest').map((p) => p.value), [10, 12]);
+  assert.deepEqual(exerciseSeries(reversed, 'goblet_squat', 'volume').map((p) => p.value), [180, 120]);
+});
+
+test('records list the heaviest set per exercise with its date, newest first', () => {
+  const r = records(history);
+  assert.deepEqual(r.map((x) => x.exerciseId).sort(), ['glute_bridge', 'goblet_squat']);
+  assert.equal(r.find((x) => x.exerciseId === 'goblet_squat')!.date, '2026-10-08T18:00:00.000Z');
+  assert.equal(r.find((x) => x.exerciseId === 'goblet_squat')!.weight, 12);
+});
+
+test('month grid starts on Monday', () => {
+  const oct = monthGrid(2026, 9); // October 2026 starts on a Thursday
+  assert.deepEqual(oct.slice(0, 4), [null, null, null, 1]);
+  assert.equal(oct.filter((d) => d !== null).length, 31);
+});

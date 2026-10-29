@@ -36,7 +36,7 @@ The workout adapts to how she feels today. A short check-in (energy, sleep, comp
 ## Brand Commitments
 
 - Name: Midlift. No logo or binding colours exist.
-- Look and feel: like Hevy (the workout logger) — the owner's explicit reference. Clean, serious logger conventions at Hevy's craft level, with Midlift's own name and accent; never copy Hevy's logo or branding.
+- Look and feel: the owner's screen designs in `design/app-schermen.html` are binding (Hevy-style logger, dark by default). Never copy Hevy's logo or branding.
 
 ## Evidence on Hand
 

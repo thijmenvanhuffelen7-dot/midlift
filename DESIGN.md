@@ -1,190 +1,154 @@
 ---
 name: Midlift
-description: A clean workout logger in the Hevy mould that shows how today's workout adapts to her.
+description: A Hevy-style workout logger, dark by default, that shows how today's workout adapts to her.
 colors:
-  bg: "#FFFFFF"
-  surface: "#FFFFFF"
-  fill: "#F1F2F4"
-  fill-strong: "#E4E6EA"
-  segment: "#FFFFFF"
-  line: "#E6E7EB"
-  ink: "#0E0F12"
-  muted: "#62666F"
-  accent: "#1F64E6"
-  accent-ink: "#FFFFFF"
-  accent-soft: "#E7EEFC"
-  ok: "#15803D"
-  ok-soft: "#E3F5E9"
-  warn: "#9A5B00"
-  warn-soft: "#FFF3DC"
-  danger: "#C62828"
-  dark-bg: "#0B0C0E"
-  dark-surface: "#16171A"
-  dark-fill: "#202227"
-  dark-segment: "#3A3D44"
-  dark-line: "#26282D"
-  dark-ink: "#F4F5F7"
-  dark-muted: "#A0A4AD"
-  dark-accent: "#4C8DFF"
-  dark-ok: "#3DD47A"
-  dark-warn: "#F2B544"
+  bg: "#0A0A0B"
+  surface: "#161618"
+  surface2: "#232326"
+  ink: "#F5F5F7"
+  muted: "#A1A1A8"
+  line: "#2E2E32"
+  accent: "#4C8DFF"
+  accent-ink: "#0A0A0B"
+  done: "#34A86E"
+  done-soft: "#102A1C"
+  pr: "#E8B04A"
+  pr-ink: "#0A0A0B"
+  light-bg: "#F5F5F7"
+  light-surface: "#FFFFFF"
+  light-surface2: "#EDEDF0"
+  light-ink: "#111113"
+  light-muted: "#5C5C64"
+  light-line: "#DADADF"
+  light-accent: "#1F5FD6"
+  light-done: "#1F7A4C"
+  light-done-soft: "#E3F2E9"
+  light-pr: "#8A5A00"
 typography:
+  display:
+    fontFamily: "Bricolage Grotesque"
+    fontSize: "40px"
+    fontWeight: 800
+    letterSpacing: "-0.5px"
   large-title:
     fontFamily: "System (SF Pro / Roboto)"
     fontSize: "32px"
     fontWeight: 800
-    letterSpacing: "-0.6px"
+    letterSpacing: "-0.5px"
   title:
     fontFamily: "System (SF Pro / Roboto)"
     fontSize: "22px"
     fontWeight: 700
-    letterSpacing: "-0.3px"
   headline:
     fontFamily: "System (SF Pro / Roboto)"
     fontSize: "17px"
     fontWeight: 600
   body:
     fontFamily: "System (SF Pro / Roboto)"
-    fontSize: "17px"
+    fontSize: "16px"
     fontWeight: 400
-    lineHeight: "23px"
-  subhead:
-    fontFamily: "System (SF Pro / Roboto)"
-    fontSize: "15px"
-    fontWeight: 400
-    lineHeight: "20px"
-  footnote:
+  label:
     fontFamily: "System (SF Pro / Roboto)"
     fontSize: "13px"
-    fontWeight: 400
-  caption:
-    fontFamily: "System (SF Pro / Roboto)"
-    fontSize: "12px"
     fontWeight: 600
+    letterSpacing: "0.5px"
 rounded:
   s: "8px"
-  m: "12px"
-  l: "16px"
+  m: "10px"
+  l: "12px"
+  sheet: "16px"
   pill: "999px"
 spacing:
   xs: "4px"
   s: "8px"
   m: "12px"
   l: "16px"
-  xl: "24px"
-  xxl: "32px"
+  xl: "20px"
+  xxl: "24px"
 components:
   button-primary:
     backgroundColor: "{colors.accent}"
     textColor: "{colors.accent-ink}"
     rounded: "{rounded.m}"
     height: "52px"
-  button-secondary:
-    backgroundColor: "{colors.fill}"
+  button-outline:
     textColor: "{colors.ink}"
     rounded: "{rounded.m}"
     height: "52px"
-  input:
-    backgroundColor: "{colors.fill}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.m}"
-    height: "48px"
-  chip:
-    backgroundColor: "{colors.fill}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.pill}"
-    height: "44px"
-  chip-selected:
-    backgroundColor: "{colors.accent}"
-    textColor: "{colors.accent-ink}"
-    rounded: "{rounded.pill}"
-    height: "44px"
   card:
     backgroundColor: "{colors.surface}"
     rounded: "{rounded.l}"
     padding: "16px"
-  set-row-done:
-    backgroundColor: "{colors.ok-soft}"
+  field:
+    backgroundColor: "{colors.surface2}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.m}"
+    height: "48px"
+  segmented-selected:
+    backgroundColor: "{colors.bg}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.s}"
     height: "48px"
+  set-row-done:
+    backgroundColor: "{colors.done-soft}"
+    rounded: "{rounded.m}"
+  pr-pill:
+    backgroundColor: "{colors.pr}"
+    textColor: "{colors.pr-ink}"
+    rounded: "{rounded.pill}"
 ---
 
 # Design System: Midlift
 
 ## Overview
 
-Midlift looks like a serious workout logger, in the mould of Hevy: plain white or near-black grounds, grey filled cells, hairlines, and one confident blue for every action. What no other logger shows is visible here: how today's workout was adapted after the check-in, always in amber. The audience is beginner women of 45–60, so everything is large, calm and plainly labelled. There is no wellness pastel and no hype.
-
-Tokens live in `src/theme.ts` (`useColors()`, `space`, `radius`, `type`). Components live in `src/ui.tsx`. Light and dark both follow the system setting and are equally finished.
+The source of truth is the owner's screen design, `design/app-schermen.html` (14 screens, dark and light). Midlift is a serious Hevy-style logger: near-black by default, flat surfaces with 1px lines, one blue for actions, green for done sets and gold for records. Users can pick System, Dark or Light in Profile; dark is the default. Tokens live in `src/theme.ts` (`useColors()` reads the chosen theme) and components in `src/ui.tsx`.
 
 ## Colors
 
-### Primary
-- **Action blue** (`accent`, dark `#4C8DFF`): primary buttons, selected chips, active tab, exercise names in the workout, trained days in the week strip, the duration value. Nothing decorative.
-
-### Secondary
-- **Done green** (`ok`, `ok-soft`): only completed sets (the row tint and the check button).
-- **Adjusted amber** (`warn`, `warn-soft`): only "adjusted for today" (the check-in result, the workout strip, the "Lighter day" badge, the hint on Today).
-
-### Neutral
-- `bg` / `surface` for grounds, `fill` for every input, chip, thumbnail and inactive check, `line` for hairlines, `ink` for text and `muted` for secondary text (≥ 4.5:1 on `bg` and `fill`).
-
-### Named Rules
-- **One blue.** Every tappable primary thing is blue; blue is never decoration.
-- **Amber means adapted.** Do not use amber for anything else, including trophies or warnings that are not about the adaptation.
+- **Blue** (`accent`) is for actions only: buttons, active tab, exercise names, trained days, the chart line, "Add set" and "Skip".
+- **Green** (`done`, `done-soft`) is for completed sets only: the row tint and the outlined check box.
+- **Gold** (`pr`) is for records and warm-up sets: the PR pill, the record toast border and the "W" set label.
+- **Neutrals:** `bg` for the page, `surface` for cards and the tab bar, `surface2` for fields, segmented tracks and the rest bar, `line` for every 1px border, and `muted` for secondary text.
 
 ## Typography
 
-System font only (SF Pro on iOS, Roboto on Android), so text follows the user's text-size setting. The scale is `large-title` (screen titles), `title` (section headings), `headline` (row titles, values), `body`, `subhead` (secondary lines), `footnote` (labels, metadata) and `caption` (week-strip weekdays, table headers). Numbers that change or compare use tabular numerals.
-
-### Named Rules
-- **No eyebrows.** Nothing sits above a heading; dates and metadata go below it or in a trailing slot.
+The system font (SF Pro / Roboto) carries the UI. Screen titles are 32/800, section titles 22/700, row titles and values 17/600, and body and secondary text 16. Section labels are 13/600, uppercase, with 0.5 tracking (DEZE WEEK, VOLGENDE TRAINING). Bricolage Grotesque ExtraBold is used only for celebration: "Sterk gedaan." (40), "Training N" (28) and the `midlift` wordmark (15). Numbers use tabular numerals.
 
 ## Layout
 
-Screens are a single column with 16px side padding and 24px between sections. A section is a `title` heading with optional trailing text on the same baseline, then its content. Lists are rows of at least 52px with hairline dividers; cards are used for one object (the next workout, one history entry, daily goals), never nested. A primary action that ends a flow is pinned in a footer bar (check-in).
+There is a single column with 16px side padding and 20px between blocks on tab screens. Lists are rows with 1px top borders (48–60px high). Cards are `surface` with a 1px line, radius 12 and padding 16. The workout screen has its own sticky header (DUUR · VOLUME · SETS · Afronden) instead of a navigation bar.
 
 ## Elevation & Depth
 
-Flat. Depth comes from the `fill` vs `bg` contrast and hairlines, not shadows. The only shadow is a 1px-offset, 4px-blur lift on the selected segment of a segmented control.
+The design is flat. Only floating layers get a shadow: the rest bar (0 10 30 rgba(0,0,0,.4)), the record toast and bottom sheets.
 
 ## Shapes
 
-Rounded rectangles: 8px for set rows and small buttons, 12px for buttons, inputs and grouped lists, 16px for cards and callouts. Chips and badges are full pills. Thumbnails and week-strip days are circles.
+Shapes are rounded: 8 for segmented options, 10 for buttons, fields and set rows, 12 for cards and floating bars, 16 for the top corners of sheets, and pills for PR badges and meters. Week and calendar days are circles: filled blue when trained, with a 2px ring for today and a 2px line for empty days.
 
 ## Components
 
-### Buttons
-Primary is a filled blue button, 52px high, bold 17px label, with an optional leading icon. Secondary is the same shape in `fill` with ink text. Plain is a blue text button. Compact buttons (36px) are used in headers and the rest bar.
-
-### Chips
-Pill chips that wrap, 44px high, in `fill`; the selected chip is blue with white text. Used for single choices on the check-in.
-
-### Segmented / choice list
-A segmented control (grey track, raised `segment` pill) only when every label fits on one line (Language). Longer options use the choice list: grouped rows in `fill` with a blue checkmark on the selected one.
-
-### Cards / Containers
-Cards are `surface` with a hairline border, 16px radius and 16px padding. Callouts (adjusted, no changes) are soft-tinted blocks without a border.
-
-### Inputs / Fields
-Filled `fill` fields with no border, 48px minimum height, a footnote label above, an optional leading icon, and a blue caret.
-
-### Navigation
-A native tab bar with four tabs (Today, Food, Progress, Profile), using Ionicons outline icons that switch to filled when active. Stack screens use the native header, and check-in is a modal.
-
-### Set table (signature)
-SET / PREVIOUS / KG / REPS / ✓ columns. Inputs are centred filled cells. Ticking a set turns the whole row `ok-soft` with a green check, gives a light haptic tick, and starts the rest bar (time, a progress line, −15 / +15, Skip). Above the first exercise sits the amber "Adjusted for today" strip when the check-in changed anything.
+- **Set table:** columns SET (44) | VORIGE | KG (68) | HERH (68) | ✓ (48), all 48px high.
+  - Tap the set number to make it a warm-up set (gold "W"). Tap VORIGE to copy last time's values.
+  - A done row turns `done-soft` with a green outlined check.
+  - "+ Set toevoegen" adds a set.
+- **Adjusted strip:** a moon icon, "Aangepast: …" and a chevron. It expands to explain the adjustment.
+- **Rest bar:** a floating `surface2` card with a progress line, RUST m:ss, −15 s, +15 s and Overslaan. Rest lasts 90 s.
+- **Record toast:** a gold-bordered card with a PR pill and "Nieuw record". It shows for 4 s.
+- **Bottom sheet:** a grab handle, a title, icon rows (56px) and an outlined Cancel button.
+- **Segmented control:** a `surface2` track. The selected option sits on `bg` in bold ink, with optional icons.
+- **Meters:** 10px pill bars. Protein is blue and calories are muted.
+- **Icons:** Lucide (`lucide-react-native`), stroke 2.
 
 ## Do's and Don'ts
 
 ### Do:
-- Use the components in `src/ui.tsx` and the colours from `useColors()`; no raw hex in screens.
-- Use Ionicons from `@expo/vector-icons` for every icon.
-- Keep touch targets ≥ 44pt, and test both light and dark.
-- Keep all copy in `src/locales/en.json` and `nl.json`.
+- Match `design/app-schermen.html` when adding or changing a screen.
+- Use `useColors()` and the components in `src/ui.tsx`. Keep all copy in the locale files.
+- Test dark and light.
 
 ### Don't:
-- Don't use unicode glyphs or emoji as icons.
-- Don't add eyebrows or kickers above headings.
-- Don't use amber or green for anything other than adapted and done.
-- Don't nest cards or wrap long labels in a segmented control.
+- Don't use blue, green or gold outside their roles.
+- Don't use the display face outside celebration moments.
+- Don't add drop shadows to cards or rows.

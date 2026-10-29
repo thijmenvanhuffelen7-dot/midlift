@@ -9,7 +9,7 @@ related_targets: []
 
 Scope: the whole native app shell and its screens. Mode: Operate.
 Audience/job: beginner women 45–60 checking in, logging sets, logging protein, glancing at progress. Constraint: Expo Go, system fonts (Dynamic Type), light + dark.
-User-pinned direction: "like Hevy" — the category canon, executed straight at Hevy's craft level. Degraded roll (no challengers); user took the standing exit.
+User-pinned direction: the owner's own screen designs in design/app-schermen.html (Hevy-style, dark default) are binding.
 
 ## Direction contract
 

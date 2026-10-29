@@ -1,11 +1,14 @@
 import { router, useLocalSearchParams } from 'expo-router';
+import { Moon } from 'lucide-react-native';
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { PainArea, STARTER_HOME } from '../src/data/program';
-import { adaptWorkout, Change, CheckIn, Level } from '../src/logic/adapt';
-import { radius, space, type, useColors } from '../src/theme';
-import { Body, Button, Chips, Footer, Icon, IconName, Screen, Section, Small } from '../src/ui';
+import { adaptWorkout, CheckIn, Level } from '../src/logic/adapt';
+import { space, useColors } from '../src/theme';
+import { Button, Card, Label, Muted, Screen, Segmented } from '../src/ui';
+import { describeChanges } from '../src/adjustments';
 
 export default function CheckInScreen() {
   const { t } = useTranslation();
@@ -19,49 +22,46 @@ export default function CheckInScreen() {
 
   const checkIn: CheckIn = { energy, sleep, pain };
   const { changes } = adaptWorkout(day, checkIn);
-
-  const describe = (ch: Change): { icon: IconName; text: string } => {
-    if (ch.type === 'fewerSets') return { icon: 'remove-circle-outline', text: t('checkin.fewerSets') };
-    if (ch.type === 'lighter') return { icon: 'arrow-down-circle-outline', text: t('checkin.lighter') };
-    return { icon: 'swap-horizontal', text: t('checkin.swapped', { from: t(`ex.${ch.from}`), to: t(`ex.${ch.to}`) }) };
-  };
+  const summary = describeChanges(t, changes, checkIn);
 
   return (
     <Screen
       title={t('checkin.title')}
-      safeTop={false}
+      subtitle={t('checkin.subtitle')}
       footer={
-        <Footer>
-          <Button
-            title={t('checkin.continue')}
-            onPress={() =>
-              router.replace({
-                pathname: '/workout',
-                params: { dayId: day.id, energy: String(energy), sleep: String(sleep), pain },
-              })
-            }
-          />
-        </Footer>
+        <SafeAreaView edges={['bottom']} style={{ backgroundColor: c.bg, borderTopWidth: 1, borderTopColor: c.line }}>
+          <View style={{ padding: space.l, paddingBottom: space.s }}>
+            <Button
+              title={t('checkin.continue')}
+              onPress={() =>
+                router.replace({
+                  pathname: '/workout',
+                  params: { dayId: day.id, energy: String(energy), sleep: String(sleep), pain },
+                })
+              }
+            />
+          </View>
+        </SafeAreaView>
       }
     >
-      <Body muted style={{ marginTop: -space.m }}>
-        {t('checkin.subtitle')}
-      </Body>
-
-      <Section title={t('checkin.energy')}>
-        <Chips<Level>
+      <View style={{ gap: space.s }}>
+        <Label>{t('checkin.energy')}</Label>
+        <Segmented<Level>
+          label={t('checkin.energy')}
           value={energy}
           onChange={setEnergy}
           options={[
-            { value: 0, label: t('checkin.low'), icon: 'battery-dead-outline' },
-            { value: 1, label: t('checkin.medium'), icon: 'battery-half-outline' },
-            { value: 2, label: t('checkin.high'), icon: 'battery-full-outline' },
+            { value: 0, label: t('checkin.low') },
+            { value: 1, label: t('checkin.medium') },
+            { value: 2, label: t('checkin.high') },
           ]}
         />
-      </Section>
+      </View>
 
-      <Section title={t('checkin.sleep')}>
-        <Chips<Level>
+      <View style={{ gap: space.s }}>
+        <Label>{t('checkin.sleep')}</Label>
+        <Segmented<Level>
+          label={t('checkin.sleep')}
           value={sleep}
           onChange={setSleep}
           options={[
@@ -70,10 +70,12 @@ export default function CheckInScreen() {
             { value: 2, label: t('checkin.good') },
           ]}
         />
-      </Section>
+      </View>
 
-      <Section title={t('checkin.pain')}>
-        <Chips<PainArea | 'none'>
+      <View style={{ gap: space.s }}>
+        <Label>{t('checkin.pain')}</Label>
+        <Segmented<PainArea | 'none'>
+          label={t('checkin.pain')}
           value={pain}
           onChange={setPain}
           options={[
@@ -83,35 +85,15 @@ export default function CheckInScreen() {
             { value: 'shoulder', label: t('checkin.shoulder') },
           ]}
         />
-      </Section>
-
-      <View
-        accessibilityLiveRegion="polite"
-        style={{
-          backgroundColor: changes.length ? c.warnSoft : c.okSoft,
-          borderRadius: radius.l,
-          padding: space.l,
-          gap: space.m,
-        }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.s }}>
-          <Icon name={changes.length ? 'sparkles' : 'checkmark-circle'} size={20} color={changes.length ? c.warn : c.ok} />
-          <Text style={[type.headline, { color: changes.length ? c.warn : c.ok }]}>
-            {changes.length ? t('checkin.adjusted') : t('checkin.noChanges')}
-          </Text>
-        </View>
-        {changes.map((ch, i) => {
-          const d = describe(ch);
-          return (
-            <View key={i} style={{ flexDirection: 'row', gap: space.s, alignItems: 'flex-start' }}>
-              <Icon name={d.icon} size={18} color={c.ink} />
-              <Small muted={false} style={{ flex: 1 }}>
-                {d.text}
-              </Small>
-            </View>
-          );
-        })}
       </View>
+
+      <Card style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.m }}>
+        <Moon size={20} color={c.accent} strokeWidth={2} />
+        <View style={{ flex: 1, gap: space.xs }} accessibilityLiveRegion="polite">
+          <Muted ink>{summary ? summary.short : t('checkin.noChanges')}</Muted>
+          {summary ? <Muted>{summary.detail}</Muted> : null}
+        </View>
+      </Card>
     </Screen>
   );
 }
