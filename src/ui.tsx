@@ -142,55 +142,63 @@ export function Button({
   );
 }
 
-/** Segmented control: grey track, the chosen option sits on the page colour. */
+/** Segmented control: grey track, the chosen option sits on the page colour. `columns` wraps it over rows. */
 export function Segmented<T extends string | number>({
   options,
   value,
   onChange,
   height = 48,
   label,
+  columns,
 }: {
   options: { value: T; label: string; icon?: LucideIcon }[];
   value: T;
   onChange: (v: T) => void;
   height?: number;
   label?: string;
+  columns?: number;
 }) {
   const c = useColors();
+  const perRow = columns ?? options.length;
+  const rows = Array.from({ length: Math.ceil(options.length / perRow) }, (_, r) => options.slice(r * perRow, r * perRow + perRow));
   return (
     <View
       accessibilityRole="radiogroup"
       accessibilityLabel={label}
-      style={{ flexDirection: 'row', backgroundColor: c.surface2, borderRadius: radius.m, padding: 4, gap: 4 }}
+      style={{ backgroundColor: c.surface2, borderRadius: radius.m, padding: 4, gap: 4 }}
     >
-      {options.map((o) => {
-        const on = o.value === value;
-        const Icon = o.icon;
-        return (
-          <Pressable
-            key={String(o.value)}
-            accessibilityRole="radio"
-            accessibilityState={{ selected: on }}
-            onPress={() => onChange(o.value)}
-            style={{
-              flex: 1,
-              minHeight: height,
-              flexDirection: 'row',
-              gap: 6,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: radius.s,
-              paddingHorizontal: space.xs,
-              backgroundColor: on ? c.bg : 'transparent',
-            }}
-          >
-            {Icon ? <Icon size={18} color={on ? c.ink : c.muted} strokeWidth={2} /> : null}
-            <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: on ? '600' : '400', color: on ? c.ink : c.muted }}>
-              {o.label}
-            </Text>
-          </Pressable>
-        );
-      })}
+      {rows.map((row, ri) => (
+        <View key={ri} style={{ flexDirection: 'row', gap: 4 }}>
+          {row.map((o) => {
+            const on = o.value === value;
+            const Icon = o.icon;
+            return (
+              <Pressable
+                key={String(o.value)}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: on }}
+                onPress={() => onChange(o.value)}
+                style={{
+                  flex: 1,
+                  minHeight: height,
+                  flexDirection: 'row',
+                  gap: 6,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: radius.s,
+                  paddingHorizontal: space.xs,
+                  backgroundColor: on ? c.bg : 'transparent',
+                }}
+              >
+                {Icon ? <Icon size={18} color={on ? c.ink : c.muted} strokeWidth={2} /> : null}
+                <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: on ? '600' : '400', color: on ? c.ink : c.muted }}>
+                  {o.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      ))}
     </View>
   );
 }
@@ -406,6 +414,62 @@ export function SheetItem({
         {sub ? <Muted>{sub}</Muted> : null}
       </View>
       {selected ? <Check size={22} color={c.accent} strokeWidth={2.5} /> : null}
+    </Pressable>
+  );
+}
+
+/** Large tappable answer for quizzes; selected gets a blue border and check. */
+export function OptionRow({
+  label,
+  sub,
+  selected,
+  onPress,
+  multi,
+}: {
+  label: string;
+  sub?: string;
+  selected: boolean;
+  onPress: () => void;
+  multi?: boolean;
+}) {
+  const c = useColors();
+  return (
+    <Pressable
+      accessibilityRole={multi ? 'checkbox' : 'radio'}
+      accessibilityState={multi ? { checked: selected } : { selected }}
+      onPress={onPress}
+      style={({ pressed }) => ({
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: space.m,
+        minHeight: 56,
+        paddingHorizontal: space.l,
+        paddingVertical: space.m,
+        borderRadius: radius.l,
+        borderWidth: 2,
+        borderColor: selected ? c.accent : c.line,
+        backgroundColor: c.surface,
+        opacity: pressed ? 0.8 : 1,
+      })}
+    >
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text style={[type.headline, { color: c.ink }]}>{label}</Text>
+        {sub ? <Muted>{sub}</Muted> : null}
+      </View>
+      <View
+        style={{
+          width: 24,
+          height: 24,
+          borderRadius: multi ? 6 : 12,
+          borderWidth: 2,
+          borderColor: selected ? c.accent : c.line,
+          backgroundColor: selected ? c.accent : 'transparent',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {selected ? <Check size={14} color={c.accentInk} strokeWidth={3} /> : null}
+      </View>
     </Pressable>
   );
 }

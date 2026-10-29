@@ -6,10 +6,10 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { describeChanges } from '../src/adjustments';
-import { EXERCISES, PainArea, STARTER_HOME } from '../src/data/program';
+import { EXERCISES, PAIN_AREAS, PainArea } from '../src/data/program';
 import { adaptWorkout, Level, suggestWeight } from '../src/logic/adapt';
 import { bestWeight, clock, isNewRecord, volume } from '../src/logic/stats';
-import { lastSetsFor, LoggedSet, Session, useStore } from '../src/store';
+import { lastSetsFor, LoggedSet, planFor, Session, useStore } from '../src/store';
 import { radius, space, type, useColors } from '../src/theme';
 import { Button, Label, Muted, PrPill, Sheet, SheetItem } from '../src/ui';
 
@@ -39,15 +39,16 @@ export default function WorkoutScreen() {
   const { t, i18n } = useTranslation();
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const { sessions, addSession } = useStore();
+  const { sessions, addSession, profile } = useStore();
   const params = useLocalSearchParams<{ dayId: string; energy: string; sleep: string; pain: string }>();
 
-  const day = STARTER_HOME.find((d) => d.id === params.dayId) ?? STARTER_HOME[0];
+  const plan = useMemo(() => planFor(profile), [profile]);
+  const day = plan.find((d) => d.id === params.dayId) ?? plan[0];
   const checkIn = useMemo(
     () => ({
       energy: (params.energy === '0' ? 0 : params.energy === '2' ? 2 : 1) as Level,
       sleep: (params.sleep === '0' ? 0 : params.sleep === '2' ? 2 : 1) as Level,
-      pain: (['knee', 'back', 'shoulder'].includes(params.pain ?? '') ? params.pain : 'none') as PainArea | 'none',
+      pain: (PAIN_AREAS.includes(params.pain as PainArea) ? params.pain : 'none') as PainArea | 'none',
     }),
     [params.energy, params.sleep, params.pain],
   );

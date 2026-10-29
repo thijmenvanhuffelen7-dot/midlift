@@ -136,3 +136,47 @@ test('month grid starts on Monday', () => {
   assert.deepEqual(oct.slice(0, 4), [null, null, null, 1]);
   assert.equal(oct.filter((d) => d !== null).length, 31);
 });
+
+// --- intake: programme choice ---
+import { buildPlan, chooseProgram, foodGoalFor } from '../src/logic/intake';
+import { PROGRAMS } from '../src/data/program';
+
+test('every programme only uses existing exercises', () => {
+  for (const [id, days] of Object.entries(PROGRAMS)) {
+    assert.equal(days.length, 3, id);
+    for (const day of days) for (const item of day.items) assert.ok(EXERCISES[item.exerciseId], `${id}: ${item.exerciseId}`);
+  }
+});
+
+test('programme follows location and equipment', () => {
+  assert.equal(chooseProgram({ location: 'gym', equipment: [] }), 'gym');
+  assert.equal(chooseProgram({ location: 'home', equipment: ['dumbbells', 'band'] }), 'home_dumbbells');
+  assert.equal(chooseProgram({ location: 'home', equipment: ['kettlebell'] }), 'home_dumbbells');
+  assert.equal(chooseProgram({ location: 'home', equipment: ['band', 'chair'] }), 'home_bodyweight');
+  assert.equal(chooseProgram({ location: 'home', equipment: ['none'] }), 'home_bodyweight');
+});
+
+test('lasting complaints are respected from day one', () => {
+  for (const area of ['knee', 'back', 'shoulder', 'pelvic'] as const) {
+    for (const program of ['home_dumbbells', 'home_bodyweight', 'gym'] as const) {
+      const plan = buildPlan(program, [area], ['band']);
+      for (const day of plan)
+        for (const item of day.items) assert.ok(!EXERCISES[item.exerciseId].stresses.includes(area), `${program}/${area}: ${item.exerciseId}`);
+    }
+  }
+  // Knee and back together still lead to safe choices.
+  const both = buildPlan('home_dumbbells', ['knee', 'back'], ['band']);
+  for (const day of both) for (const item of day.items) assert.deepEqual(EXERCISES[item.exerciseId].stresses.filter((a) => a === 'knee' || a === 'back'), []);
+});
+
+test('no band at home: band exercises become body-weight ones', () => {
+  const plan = buildPlan('home_bodyweight', [], ['chair']);
+  assert.ok(plan.every((d) => d.items.every((i) => i.exerciseId !== 'band_pull_apart')));
+  const withBand = buildPlan('home_bodyweight', [], ['band']);
+  assert.ok(withBand.some((d) => d.items.some((i) => i.exerciseId === 'band_pull_apart')));
+});
+
+test('food goal follows the training goal', () => {
+  assert.equal(foodGoalFor('fatloss'), 'lose');
+  assert.equal(foodGoalFor('strength'), 'maintain');
+});

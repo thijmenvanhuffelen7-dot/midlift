@@ -1,6 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n, { deviceLanguage, Lang } from './i18n';
+import type { ProgramId, WorkoutDay } from './data/program';
+import { buildPlan, chooseProgram, foodGoalFor, Intake } from './logic/intake';
 import type { Activity, FoodGoal } from './logic/nutrition';
 import type { ThemePref } from './theme';
 
@@ -13,7 +15,14 @@ export type Profile = {
   goal: FoodGoal;
   hideCalories: boolean;
   theme: ThemePref;
+  /** finished the first-run quiz */
+  onboarded: boolean;
+  program: ProgramId;
+  intake?: Intake;
 };
+
+/** Subscription state; `test` marks purchases made in test mode (nothing charged). */
+export type Premium = { active: boolean; plan?: 'monthly' | 'yearly'; since?: string; test?: boolean };
 
 export type LoggedSet = { exerciseId: string; weight: number; reps: number; warmup?: boolean };
 export type Session = {
@@ -31,7 +40,7 @@ export type Session = {
 };
 export type FoodEntry = { id: string; date: string; name: string; grams: number; kcal: number; protein: number };
 
-type State = { profile: Profile; sessions: Session[]; food: FoodEntry[] };
+type State = { profile: Profile; sessions: Session[]; food: FoodEntry[]; premium: Premium };
 
 const STORAGE_KEY = 'midlift.v1';
 
@@ -45,14 +54,19 @@ const initialState: State = {
     goal: 'maintain',
     hideCalories: false,
     theme: 'dark',
+    onboarded: false,
+    program: 'home_dumbbells',
   },
   sessions: [],
   food: [],
+  premium: { active: false },
 };
 
 type Store = State & {
   ready: boolean;
   updateProfile: (patch: Partial<Profile>) => void;
+  completeIntake: (intake: Intake) => void;
+  setPremium: (p: Premium) => void;
   addSession: (s: Omit<Session, 'id'>) => string;
   addFood: (f: Omit<FoodEntry, 'id'>) => void;
   removeFood: (id: string) => void;
@@ -77,6 +91,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             profile: { ...s.profile, ...saved.profile },
             sessions: saved.sessions ?? [],
             food: saved.food ?? [],
+            premium: saved.premium ?? s.premium,
           }));
         }
       })
@@ -103,6 +118,25 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const updateProfile = useCallback((patch: Partial<Profile>) => {
     setState((s) => ({ ...s, profile: { ...s.profile, ...patch } }));
   }, []);
+  const completeIntake = useCallback((intake: Intake) => {
+    setState((s) => ({
+      ...s,
+      profile: {
+        ...s.profile,
+        intake,
+        age: intake.age,
+        heightCm: intake.heightCm,
+        weightKg: intake.weightKg,
+        activity: intake.activity,
+        goal: foodGoalFor(intake.goal),
+        program: chooseProgram(intake),
+        onboarded: true,
+      },
+    }));
+  }, []);
+  const setPremium = useCallback((premium: Premium) => {
+    setState((s) => ({ ...s, premium }));
+  }, []);
   const addSession = useCallback((sess: Omit<Session, 'id'>) => {
     const id = newId();
     setState((s) => ({ ...s, sessions: [{ ...sess, id }, ...s.sessions] }));
@@ -116,8 +150,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo<Store>(
-    () => ({ ...state, ready, updateProfile, addSession, addFood, removeFood }),
-    [state, ready, updateProfile, addSession, addFood, removeFood],
+    () => ({ ...state, ready, updateProfile, completeIntake, setPremium, addSession, addFood, removeFood }),
+    [state, ready, updateProfile, completeIntake, setPremium, addSession, addFood, removeFood],
   );
 
   // Always render the navigator (Expo Router needs it mounted); screens use `ready` where it matters.
@@ -137,4 +171,9 @@ export function lastSetsFor(sessions: Session[], exerciseId: string): LoggedSet[
     if (sets.length) return sets;
   }
   return undefined;
+}
+
+/** The user's three workouts: chosen programme with lasting complaints already swapped out. */
+export function planFor(profile: Profile): WorkoutDay[] {
+  return buildPlan(profile.program, profile.intake?.complaints ?? [], profile.intake?.equipment ?? []);
 }

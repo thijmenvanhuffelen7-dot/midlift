@@ -4,17 +4,20 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { PainArea, STARTER_HOME } from '../src/data/program';
+import { PainArea } from '../src/data/program';
 import { adaptWorkout, CheckIn, Level } from '../src/logic/adapt';
 import { space, useColors } from '../src/theme';
 import { Button, Card, Label, Muted, Screen, Segmented } from '../src/ui';
 import { describeChanges } from '../src/adjustments';
+import { planFor, useStore } from '../src/store';
 
 export default function CheckInScreen() {
   const { t } = useTranslation();
   const c = useColors();
   const { dayId } = useLocalSearchParams<{ dayId: string }>();
-  const day = STARTER_HOME.find((d) => d.id === dayId) ?? STARTER_HOME[0];
+  const { profile } = useStore();
+  const plan = planFor(profile);
+  const day = plan.find((d) => d.id === dayId) ?? plan[0];
 
   const [energy, setEnergy] = useState<Level>(1);
   const [sleep, setSleep] = useState<Level>(1);
@@ -78,11 +81,13 @@ export default function CheckInScreen() {
           label={t('checkin.pain')}
           value={pain}
           onChange={setPain}
+          columns={3}
           options={[
             { value: 'none', label: t('checkin.none') },
             { value: 'knee', label: t('checkin.knee') },
             { value: 'back', label: t('checkin.back') },
             { value: 'shoulder', label: t('checkin.shoulder') },
+            { value: 'pelvic', label: t('checkin.pelvic') },
           ]}
         />
       </View>

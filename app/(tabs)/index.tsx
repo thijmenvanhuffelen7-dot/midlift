@@ -2,20 +2,21 @@ import { router } from 'expo-router';
 import { ChevronRight, Play } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { EXERCISES, STARTER_HOME, WORKOUTS_PER_WEEK } from '../../src/data/program';
+import { EXERCISES, WORKOUTS_PER_WEEK } from '../../src/data/program';
 import { isThisWeek } from '../../src/logic/dates';
-import { useStore } from '../../src/store';
+import { planFor, useStore } from '../../src/store';
 import { space, type, useColors } from '../../src/theme';
 import { Button, Card, H2, Label, Muted, Screen, Strong, WeekDots } from '../../src/ui';
 
 export default function Today() {
   const { t, i18n } = useTranslation();
   const c = useColors();
-  const { sessions } = useStore();
+  const { sessions, profile } = useStore();
+  const plan = planFor(profile);
 
   const thisWeek = sessions.filter((s) => isThisWeek(s.date));
   const done = thisWeek.length;
-  const next = STARTER_HOME[done % STARTER_HOME.length];
+  const next = plan[done % plan.length];
   const last = sessions[0];
 
   return (

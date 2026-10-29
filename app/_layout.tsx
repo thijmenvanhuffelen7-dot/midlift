@@ -24,6 +24,9 @@ function RootStack() {
         <Stack.Screen name="checkin" options={{ title: '', presentation: 'modal' }} />
         <Stack.Screen name="workout" options={{ headerShown: false }} />
         <Stack.Screen name="done" options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="intake" options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="paywall" options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="legal" options={{ presentation: 'modal' }} />
       </Stack>
     </>
   );

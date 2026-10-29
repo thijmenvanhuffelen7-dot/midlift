@@ -1,20 +1,23 @@
+import { router } from 'expo-router';
 import { Monitor, Moon, Sun } from 'lucide-react-native';
 import { useState } from 'react';
-import { Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Switch, Text, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { ProgramId } from '../../src/data/program';
 import { Lang } from '../../src/i18n';
+import { formatPrice, PLANS, PURCHASES_TEST_MODE, restore } from '../../src/purchases';
 import { Activity, FoodGoal } from '../../src/logic/nutrition';
 import { Profile as ProfileData, useStore } from '../../src/store';
 import { radius, space, type, ThemePref, useColors } from '../../src/theme';
 import { Button, Label, ListRow, Muted, Screen, Segmented, Sheet, SheetItem } from '../../src/ui';
 
 type NumberField = 'age' | 'heightCm' | 'weightKg';
-type Editing = { kind: 'number'; field: NumberField } | { kind: 'activity' } | { kind: 'goal' } | null;
+type Editing = { kind: 'number'; field: NumberField } | { kind: 'activity' } | { kind: 'goal' } | { kind: 'program' } | null;
 
 export default function Profile() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const c = useColors();
-  const { profile, updateProfile } = useStore();
+  const { profile, updateProfile, premium, setPremium } = useStore();
   const [editing, setEditing] = useState<Editing>(null);
   const [draft, setDraft] = useState('');
 
@@ -82,6 +85,43 @@ export default function Profile() {
         </View>
       </View>
 
+      <View>
+        <Label style={{ paddingBottom: space.s }}>{t('profile.training')}</Label>
+        <ListRow label={t('profile.program')} value={t(`programs.${profile.program}.name`)} onPress={() => setEditing({ kind: 'program' })} />
+        <ListRow label={t('profile.redoIntake')} onPress={() => updateProfile({ onboarded: false })} last />
+      </View>
+
+      <View>
+        <Label style={{ paddingBottom: space.s }}>{t('profile.subscription')}</Label>
+        <ListRow
+          label={t('profile.premium')}
+          value={
+            premium.active
+              ? `${t(`paywall.${premium.plan ?? 'yearly'}`)} · ${formatPrice(PLANS.find((p) => p.id === (premium.plan ?? 'yearly'))!.price, i18n.language)}`
+              : t('profile.inactive')
+          }
+        />
+        <ListRow
+          label={t('paywall.restore')}
+          onPress={async () => {
+            const res = await restore();
+            if (res.active && res.plan) setPremium({ active: true, plan: res.plan, since: new Date().toISOString() });
+            else Alert.alert(t('paywall.restoreNoneTitle'), t('paywall.restoreNone'));
+          }}
+        />
+        <ListRow label={t('legal.privacyTitle')} onPress={() => router.push({ pathname: '/legal', params: { doc: 'privacy' } })} />
+        <ListRow label={t('legal.termsTitle')} onPress={() => router.push({ pathname: '/legal', params: { doc: 'terms' } })} last />
+        <Muted style={{ marginTop: space.s }}>{t('profile.manageHint')}</Muted>
+      </View>
+
+      {PURCHASES_TEST_MODE ? (
+        <View>
+          <Label style={{ paddingBottom: space.s, color: c.pr }}>{t('profile.testSection')}</Label>
+          <ListRow label={t('profile.testEndPremium')} onPress={() => setPremium({ active: false })} last />
+          <Muted style={{ marginTop: space.s }}>{t('profile.testHint')}</Muted>
+        </View>
+      ) : null}
+
       <Muted>{t('profile.disclaimer')}</Muted>
 
       <Sheet visible={editing?.kind === 'number'} title={editing?.kind === 'number' ? numberLabel[editing.field] : ''} onClose={() => setEditing(null)}>
@@ -109,6 +149,22 @@ export default function Profile() {
             last={i === 2}
             onPress={() => {
               updateProfile({ activity: a });
+              setEditing(null);
+            }}
+          />
+        ))}
+      </Sheet>
+
+      <Sheet visible={editing?.kind === 'program'} title={t('profile.program')} onClose={() => setEditing(null)}>
+        {(['home_dumbbells', 'home_bodyweight', 'gym'] as ProgramId[]).map((p, i) => (
+          <SheetItem
+            key={p}
+            label={t(`programs.${p}.name`)}
+            sub={t(`programs.${p}.desc`)}
+            selected={profile.program === p}
+            last={i === 2}
+            onPress={() => {
+              updateProfile({ program: p });
               setEditing(null);
             }}
           />

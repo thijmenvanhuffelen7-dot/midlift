@@ -16,7 +16,8 @@
     "g": "g",
     "kcal": "kcal",
     "sec": "sec",
-    "close": "Close"
+    "close": "Close",
+    "back": "Back"
   },
   "today": {
     "thisWeek": "This week",
@@ -55,7 +56,8 @@
     "noChanges": "No changes needed. Go for it.",
     "fewerSets": "One set less per exercise",
     "lighter": "Use a little less weight than last time",
-    "swapped": "{{from}} swapped for {{to}}"
+    "swapped": "{{from}} swapped for {{to}}",
+    "pelvic": "Pelvic floor"
   },
   "workout": {
     "rest": "Rest",
@@ -150,7 +152,17 @@
     "goalShort": {
       "maintain": "Enough energy",
       "lose": "Lose some fat"
-    }
+    },
+    "training": "Training",
+    "program": "Programme",
+    "redoIntake": "Redo the intake",
+    "subscription": "Subscription",
+    "premium": "Midlift Premium",
+    "inactive": "Not active",
+    "manageHint": "Cancel or change it in your App Store or Google Play account settings.",
+    "testSection": "Testing",
+    "testEndPremium": "Turn off Premium (test)",
+    "testHint": "Only visible while payments are in test mode."
   },
   "ex": {
     "goblet_squat": "Goblet squat",
@@ -165,12 +177,23 @@
     "rdl": "Romanian deadlift",
     "incline_pushup": "Incline push-up",
     "dead_bug": "Dead bug",
-    "bird_dog": "Bird dog"
+    "bird_dog": "Bird dog",
+    "leg_press": "Leg press",
+    "hip_thrust": "Hip thrust",
+    "lat_pulldown": "Lat pulldown",
+    "cable_row": "Cable row",
+    "chest_press": "Chest press (machine)"
   },
   "days": {
     "legs": "Legs & glutes",
     "pull": "Back & arms",
-    "full": "Full body"
+    "full": "Full body",
+    "bw_lower": "Legs & glutes",
+    "bw_upper": "Upper body & core",
+    "bw_full": "Full body",
+    "gym_lower": "Legs & glutes",
+    "gym_upper": "Back, chest & arms",
+    "gym_full": "Full body"
   },
   "weekdaysShort": [
     "Mo",
@@ -195,7 +218,8 @@
     "area": {
       "knee": "knee",
       "back": "back",
-      "shoulder": "shoulder"
+      "shoulder": "shoulder",
+      "pelvic": "pelvic floor"
     },
     "fewerSetsDetail": "One set less per exercise today.",
     "weightsSame": "Your weights stay the same.",
@@ -234,6 +258,157 @@
     "rdl": "Hips back, keep the weight close to your legs.",
     "incline_pushup": "Body in one line, chest to the edge.",
     "dead_bug": "Lower back on the floor, breathe calmly.",
-    "bird_dog": "Reach long with arm and leg, hips still."
+    "bird_dog": "Reach long with arm and leg, hips still.",
+    "leg_press": "Feet hip-width, knees in line with your toes.",
+    "hip_thrust": "Chin to chest, drive your hips up.",
+    "lat_pulldown": "Pull the bar to your chest, shoulders down.",
+    "cable_row": "Back straight, pull your elbows along your sides.",
+    "chest_press": "Shoulder blades against the pad, push calmly."
+  },
+  "programs": {
+    "home_dumbbells": {
+      "name": "Home with weights",
+      "desc": "Three short workouts with dumbbells or a kettlebell."
+    },
+    "home_bodyweight": {
+      "name": "Home without weights",
+      "desc": "Three short workouts with your body weight, a chair and maybe a band."
+    },
+    "gym": {
+      "name": "Gym",
+      "desc": "Three workouts with machines and dumbbells, explained so you know what you are doing."
+    }
+  },
+  "intake": {
+    "next": "Next",
+    "makePlan": "Make my plan",
+    "toPaywall": "Continue",
+    "planTitle": "Your plan is ready",
+    "planSub": "Based on your answers. You can change it any time in Profile.",
+    "yourProgram": "Your programme",
+    "perWeek": "{{count}} workouts a week · about {{minutes}} min",
+    "considered": "What we take into account",
+    "consideredText": "Exercises that load your {{areas}} have been replaced with friendlier variations.",
+    "consideredCheckin": "Something bothering you on a given day? Say so in the check-in and your workout adapts.",
+    "dailyProtein": "Protein per day",
+    "proteinWhy": "Protein helps your muscles recover and get stronger. The app keeps tracking it simple.",
+    "unit": {
+      "years": "years",
+      "cm": "cm",
+      "kg": "kg"
+    },
+    "q": {
+      "age": {
+        "title": "How old are you?",
+        "help": "Your age helps us set your goals."
+      },
+      "heightCm": {
+        "title": "How tall are you?"
+      },
+      "weightKg": {
+        "title": "Roughly how much do you weigh?",
+        "help": "An estimate is fine. We use it for your protein goal."
+      },
+      "experience": {
+        "title": "How much strength training experience do you have?",
+        "options": {
+          "none": "Never done it",
+          "some": "A little, or a long time ago",
+          "regular": "I already train regularly"
+        }
+      },
+      "location": {
+        "title": "Where will you train?",
+        "options": {
+          "home": "At home",
+          "gym": "At the gym"
+        }
+      },
+      "equipment": {
+        "title": "What do you have at home?",
+        "help": "Pick everything you have.",
+        "options": {
+          "dumbbells": "Dumbbells",
+          "kettlebell": "Kettlebell",
+          "band": "Resistance band",
+          "chair": "Sturdy chair or bench",
+          "none": "None of these"
+        }
+      },
+      "complaints": {
+        "title": "Does anything often bother you?",
+        "help": "Then we pick exercises that take it into account from the start.",
+        "options": {
+          "knee": "Knee",
+          "back": "Back",
+          "shoulder": "Shoulder",
+          "pelvic": "Pelvic floor",
+          "none": "No, nothing"
+        }
+      },
+      "barriers": {
+        "title": "What held you back before?",
+        "help": "Pick what sounds familiar, or skip.",
+        "options": {
+          "time": "No time",
+          "howto": "I did not know how",
+          "injury": "Afraid of getting injured",
+          "motivation": "Hard to keep going",
+          "gym": "The gym felt uncomfortable",
+          "complaints": "Physical complaints"
+        }
+      },
+      "goal": {
+        "title": "What is your main goal?",
+        "options": {
+          "strength": "Get stronger",
+          "energy": "More energy, feel fitter",
+          "bones": "Keep strong bones and muscles",
+          "fatloss": "Lose some fat"
+        }
+      },
+      "activity": {
+        "title": "How active is a normal day for you?",
+        "options": {
+          "0": "Mostly sitting",
+          "1": "On my feet a lot",
+          "2": "Physically active work"
+        }
+      }
+    }
+  },
+  "paywall": {
+    "title": "Get stronger, your way.",
+    "subtitle": "Your \"{{program}}\" plan is ready. Try Midlift Premium free for 7 days.",
+    "subtitleGeneric": "Try Midlift Premium free for 7 days.",
+    "benefits": {
+      "adapts": "Workouts that adapt every day to how you feel",
+      "program": "A programme for home or the gym, tuned to your complaints",
+      "explain": "Clear guidance for every exercise",
+      "food": "Track protein and progress simply"
+    },
+    "yearly": "Yearly",
+    "monthly": "Monthly",
+    "save": "Save {{pct}}%",
+    "yearlySub": "{{perMonth}} a month, billed yearly",
+    "monthlySub": "Billed monthly",
+    "per": {
+      "yearly": "per year",
+      "monthly": "per month"
+    },
+    "terms": "{{days}} days free, then {{price}} {{period}}. Cancel any time, at least 24 hours before the trial ends.",
+    "cta": "Start {{days}} days free",
+    "restore": "Restore purchases",
+    "restoreNoneTitle": "No purchases found",
+    "restoreNone": "We found no earlier subscription on this account.",
+    "errorTitle": "That did not work",
+    "error": "The purchase did not go through. Please try again.",
+    "testMode": "Test mode: nothing will be charged."
+  },
+  "legal": {
+    "privacyTitle": "Privacy policy",
+    "termsTitle": "Terms",
+    "privacyShort": "Privacy",
+    "termsShort": "Terms"
   }
 }

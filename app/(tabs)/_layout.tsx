@@ -1,7 +1,8 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import { Apple, Calendar, ChartLine, LucideIcon, User } from 'lucide-react-native';
 import { ColorValue } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useStore } from '../../src/store';
 import { useColors } from '../../src/theme';
 
 const tabIcon =
@@ -11,6 +12,11 @@ const tabIcon =
 export default function TabLayout() {
   const c = useColors();
   const { t } = useTranslation();
+  const { ready, profile, premium } = useStore();
+  // First run: intake, then the paywall. Premium unlocks the app.
+  if (!ready) return null;
+  if (!profile.onboarded) return <Redirect href="/intake" />;
+  if (!premium.active) return <Redirect href="/paywall" />;
   return (
     <Tabs
       screenOptions={{

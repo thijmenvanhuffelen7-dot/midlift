@@ -16,7 +16,8 @@
     "g": "g",
     "kcal": "kcal",
     "sec": "sec",
-    "close": "Sluiten"
+    "close": "Sluiten",
+    "back": "Terug"
   },
   "today": {
     "thisWeek": "Deze week",
@@ -55,7 +56,8 @@
     "noChanges": "Geen aanpassingen nodig. Zet 'm op.",
     "fewerSets": "Eén set minder per oefening",
     "lighter": "Iets minder gewicht dan vorige keer",
-    "swapped": "{{from}} vervangen door {{to}}"
+    "swapped": "{{from}} vervangen door {{to}}",
+    "pelvic": "Bekkenbodem"
   },
   "workout": {
     "rest": "Rust",
@@ -150,7 +152,17 @@
     "goalShort": {
       "maintain": "Genoeg energie",
       "lose": "Wat vet verliezen"
-    }
+    },
+    "training": "Training",
+    "program": "Programma",
+    "redoIntake": "Intake opnieuw doen",
+    "subscription": "Abonnement",
+    "premium": "Midlift Premium",
+    "inactive": "Niet actief",
+    "manageHint": "Opzeggen of wijzigen doe je in de instellingen van je App Store- of Google Play-account.",
+    "testSection": "Testen",
+    "testEndPremium": "Premium uitzetten (test)",
+    "testHint": "Alleen zichtbaar zolang betalen in testmodus staat."
   },
   "ex": {
     "goblet_squat": "Goblet squat",
@@ -165,12 +177,23 @@
     "rdl": "Romanian deadlift",
     "incline_pushup": "Push-up op verhoging",
     "dead_bug": "Dead bug",
-    "bird_dog": "Bird dog"
+    "bird_dog": "Bird dog",
+    "leg_press": "Beenpers",
+    "hip_thrust": "Hip thrust",
+    "lat_pulldown": "Lat pulldown",
+    "cable_row": "Roeien aan de kabel",
+    "chest_press": "Borstpers (machine)"
   },
   "days": {
     "legs": "Benen & billen",
     "pull": "Rug & armen",
-    "full": "Hele lichaam"
+    "full": "Hele lichaam",
+    "bw_lower": "Benen & billen",
+    "bw_upper": "Bovenlichaam & romp",
+    "bw_full": "Hele lichaam",
+    "gym_lower": "Benen & billen",
+    "gym_upper": "Rug, borst & armen",
+    "gym_full": "Hele lichaam"
   },
   "weekdaysShort": [
     "ma",
@@ -195,7 +218,8 @@
     "area": {
       "knee": "knie",
       "back": "rug",
-      "shoulder": "schouder"
+      "shoulder": "schouder",
+      "pelvic": "bekkenbodem"
     },
     "fewerSetsDetail": "Eén set minder per oefening vandaag.",
     "weightsSame": "Je gewichten blijven gelijk.",
@@ -234,6 +258,157 @@
     "rdl": "Heupen naar achteren, gewicht dicht langs je benen.",
     "incline_pushup": "Lichaam in één lijn, borst naar de rand.",
     "dead_bug": "Onderrug tegen de grond, rustig ademen.",
-    "bird_dog": "Arm en been lang, heupen stil."
+    "bird_dog": "Arm en been lang, heupen stil.",
+    "leg_press": "Voeten op heupbreedte, knieën in lijn met je tenen.",
+    "hip_thrust": "Kin naar je borst, druk je heupen omhoog.",
+    "lat_pulldown": "Trek de stang naar je borst, schouders laag.",
+    "cable_row": "Rug recht, trek je ellebogen langs je lijf.",
+    "chest_press": "Schouderbladen tegen de rugleuning, rustig duwen."
+  },
+  "programs": {
+    "home_dumbbells": {
+      "name": "Thuis met gewichten",
+      "desc": "Drie korte trainingen met dumbbells of een kettlebell."
+    },
+    "home_bodyweight": {
+      "name": "Thuis zonder gewichten",
+      "desc": "Drie korte trainingen met je eigen lichaam, een stoel en eventueel een elastiek."
+    },
+    "gym": {
+      "name": "Sportschool",
+      "desc": "Drie trainingen met machines en dumbbells, met uitleg zodat je weet wat je doet."
+    }
+  },
+  "intake": {
+    "next": "Volgende",
+    "makePlan": "Maak mijn plan",
+    "toPaywall": "Verder",
+    "planTitle": "Je plan staat klaar",
+    "planSub": "Op basis van je antwoorden. Je kunt het altijd aanpassen bij Profiel.",
+    "yourProgram": "Jouw programma",
+    "perWeek": "{{count}} trainingen per week · ongeveer {{minutes}} min",
+    "considered": "Waar we rekening mee houden",
+    "consideredText": "Oefeningen die je {{areas}} belasten, zijn vervangen door vriendelijkere varianten.",
+    "consideredCheckin": "Heb je op een dag ergens last van? Geef het aan bij de check-in, dan past je training zich aan.",
+    "dailyProtein": "Eiwit per dag",
+    "proteinWhy": "Eiwit helpt je spieren herstellen en sterker worden. In de app houd je het simpel bij.",
+    "unit": {
+      "years": "jaar",
+      "cm": "cm",
+      "kg": "kg"
+    },
+    "q": {
+      "age": {
+        "title": "Hoe oud ben je?",
+        "help": "Je leeftijd helpt ons je doelen goed in te schatten."
+      },
+      "heightCm": {
+        "title": "Hoe lang ben je?"
+      },
+      "weightKg": {
+        "title": "Wat weeg je ongeveer?",
+        "help": "Een schatting is genoeg. We gebruiken het voor je eiwitdoel."
+      },
+      "experience": {
+        "title": "Hoeveel ervaring heb je met krachttraining?",
+        "options": {
+          "none": "Nog nooit gedaan",
+          "some": "Een beetje, of lang geleden",
+          "regular": "Ik train al regelmatig"
+        }
+      },
+      "location": {
+        "title": "Waar ga je trainen?",
+        "options": {
+          "home": "Thuis",
+          "gym": "In de sportschool"
+        }
+      },
+      "equipment": {
+        "title": "Wat heb je thuis?",
+        "help": "Kies alles wat je hebt.",
+        "options": {
+          "dumbbells": "Dumbbells",
+          "kettlebell": "Kettlebell",
+          "band": "Weerstandselastiek",
+          "chair": "Stevige stoel of bank",
+          "none": "Niets van dit"
+        }
+      },
+      "complaints": {
+        "title": "Heb je regelmatig ergens last van?",
+        "help": "Dan kiezen we vanaf het begin oefeningen die daar rekening mee houden.",
+        "options": {
+          "knee": "Knie",
+          "back": "Rug",
+          "shoulder": "Schouder",
+          "pelvic": "Bekkenbodem",
+          "none": "Nee, nergens"
+        }
+      },
+      "barriers": {
+        "title": "Wat hield je eerder tegen?",
+        "help": "Kies wat herkenbaar is, of sla over.",
+        "options": {
+          "time": "Geen tijd",
+          "howto": "Ik wist niet hoe het moest",
+          "injury": "Bang om me te blesseren",
+          "motivation": "Lastig om vol te houden",
+          "gym": "De sportschool voelde ongemakkelijk",
+          "complaints": "Lichamelijke klachten"
+        }
+      },
+      "goal": {
+        "title": "Wat is je belangrijkste doel?",
+        "options": {
+          "strength": "Sterker worden",
+          "energy": "Meer energie, fitter voelen",
+          "bones": "Sterke botten en spieren houden",
+          "fatloss": "Wat vet verliezen"
+        }
+      },
+      "activity": {
+        "title": "Hoe actief ben je op een gewone dag?",
+        "options": {
+          "0": "Vooral zittend",
+          "1": "Veel op de been",
+          "2": "Lichamelijk actief werk"
+        }
+      }
+    }
+  },
+  "paywall": {
+    "title": "Word sterker, op jouw manier.",
+    "subtitle": "Je plan \"{{program}}\" staat klaar. Probeer Midlift Premium 7 dagen gratis.",
+    "subtitleGeneric": "Probeer Midlift Premium 7 dagen gratis.",
+    "benefits": {
+      "adapts": "Trainingen die zich elke dag aanpassen aan hoe je je voelt",
+      "program": "Een programma voor thuis of de sportschool, afgestemd op je klachten",
+      "explain": "Duidelijke uitleg bij elke oefening",
+      "food": "Eiwit en voortgang simpel bijhouden"
+    },
+    "yearly": "Jaar",
+    "monthly": "Maand",
+    "save": "Bespaar {{pct}}%",
+    "yearlySub": "{{perMonth}} per maand, per jaar betaald",
+    "monthlySub": "Per maand betaald",
+    "per": {
+      "yearly": "per jaar",
+      "monthly": "per maand"
+    },
+    "terms": "{{days}} dagen gratis, daarna {{price}} {{period}}. Opzeggen kan altijd, uiterlijk 24 uur voor het einde van de proefperiode.",
+    "cta": "Start {{days}} dagen gratis",
+    "restore": "Aankopen herstellen",
+    "restoreNoneTitle": "Geen aankopen gevonden",
+    "restoreNone": "We vonden geen eerder abonnement op dit account.",
+    "errorTitle": "Dat lukte niet",
+    "error": "De aankoop is niet gelukt. Probeer het opnieuw.",
+    "testMode": "Testmodus: er wordt niets afgeschreven."
+  },
+  "legal": {
+    "privacyTitle": "Privacyverklaring",
+    "termsTitle": "Voorwaarden",
+    "privacyShort": "Privacy",
+    "termsShort": "Voorwaarden"
   }
 }
