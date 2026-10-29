@@ -68,6 +68,10 @@
   "profile": {
     "title": "Profiel",
     "language": "Taal",
+    "theme": "Weergave",
+    "themeSystem": "Systeem",
+    "themeDark": "Donker",
+    "themeLight": "Licht",
     "body": "Jouw gegevens",
     "age": "Leeftijd",
     "height": "Lengte (cm)",

@@ -68,6 +68,10 @@
   "profile": {
     "title": "Profile",
     "language": "Language",
+    "theme": "Appearance",
+    "themeSystem": "System",
+    "themeDark": "Dark",
+    "themeLight": "Light",
     "body": "Your details",
     "age": "Age",
     "height": "Height (cm)",

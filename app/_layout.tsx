@@ -4,14 +4,15 @@ import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StoreProvider } from '../src/store';
-import { useColors } from '../src/theme';
+import { useColors, useScheme } from '../src/theme';
 
 function RootStack() {
   const c = useColors();
+  const scheme = useScheme();
   const { t } = useTranslation();
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: c.bg },

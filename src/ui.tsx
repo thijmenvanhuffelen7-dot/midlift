@@ -22,32 +22,50 @@ export function Screen({
   );
 }
 
+/** Schermtitel bovenaan een tabblad (Large title, 32/800). */
 export function Title({ children }: { children: React.ReactNode }) {
   const c = useColors();
-  return <Text style={[type.title, { color: c.ink }]}>{children}</Text>;
+  return (
+    <Text accessibilityRole="header" style={[type.largeTitle, { color: c.ink }]}>
+      {children}
+    </Text>
+  );
 }
 
+/** Naam van de training, sheet-titels (Title, 22/700). */
 export function H2({ children }: { children: React.ReactNode }) {
   const c = useColors();
-  return <Text style={[type.h2, { color: c.ink }]}>{children}</Text>;
+  return (
+    <Text accessibilityRole="header" style={[type.title, { color: c.ink }]}>
+      {children}
+    </Text>
+  );
+}
+
+/** Oefeningnaam, kopjes in een kaart (Headline, 17/600). */
+export function Headline({ children, style }: { children: React.ReactNode; style?: object }) {
+  const c = useColors();
+  return <Text style={[type.headline, { color: c.ink }, style]}>{children}</Text>;
 }
 
 export function Body({ children, muted, style }: { children: React.ReactNode; muted?: boolean; style?: object }) {
   const c = useColors();
-  return <Text style={[type.body, { color: muted ? c.muted : c.ink, lineHeight: 22 }, style]}>{children}</Text>;
+  return <Text style={[type.body, { color: muted ? c.muted : c.ink }, style]}>{children}</Text>;
 }
 
+/** Klein label in hoofdletters (Caption, 13/600). */
 export function Label({ children, accent }: { children: React.ReactNode; accent?: boolean }) {
   const c = useColors();
-  return <Text style={[type.label, { color: accent ? c.accent : c.muted }]}>{children}</Text>;
+  return <Text style={[type.caption, { color: accent ? c.accent : c.muted }]}>{children}</Text>;
 }
 
+/** Kaart: alleen voor oefenblokken en samenvattingen. Geen schaduw. */
 export function Card({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
   const c = useColors();
   return (
     <View
       style={[
-        { backgroundColor: c.surface, borderColor: c.line, borderWidth: 1, borderRadius: radius.l, padding: space.l, gap: space.m },
+        { backgroundColor: c.surface, borderColor: c.line, borderWidth: 1, borderRadius: radius.card, padding: space.l, gap: space.m },
         style,
       ]}
     >
@@ -72,6 +90,7 @@ export function Button({
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityState={{ disabled: !!disabled }}
       onPress={onPress}
       disabled={disabled}
       style={({ pressed }) => [
@@ -83,12 +102,12 @@ export function Button({
         },
       ]}
     >
-      <Text style={{ color: primary ? c.accentInk : c.ink, fontWeight: '700', fontSize: 16 }}>{title}</Text>
+      <Text style={[type.headline, { color: primary ? c.accentInk : c.ink, textAlign: 'center' }]}>{title}</Text>
     </Pressable>
   );
 }
 
-/** A row of mutually exclusive options. */
+/** A row of mutually exclusive options. Gekozen optie: rand in accent, vette tekst en een vinkje (niet alleen kleur). */
 export function Segmented<T extends string | number>({
   options,
   value,
@@ -100,7 +119,7 @@ export function Segmented<T extends string | number>({
 }) {
   const c = useColors();
   return (
-    <View style={{ flexDirection: 'row', gap: space.s, flexWrap: 'wrap' }}>
+    <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', gap: space.s, flexWrap: 'wrap' }}>
       {options.map((o) => {
         const on = o.value === value;
         return (
@@ -111,17 +130,21 @@ export function Segmented<T extends string | number>({
             onPress={() => onChange(o.value)}
             style={{
               flexGrow: 1,
-              minHeight: 44,
+              minHeight: 48,
               paddingHorizontal: space.m,
+              paddingVertical: space.s,
               justifyContent: 'center',
               alignItems: 'center',
-              borderRadius: radius.m,
-              borderWidth: 1.5,
+              borderRadius: radius.control,
+              borderWidth: on ? 2 : 1,
               borderColor: on ? c.accent : c.line,
-              backgroundColor: on ? c.accentSoft : 'transparent',
+              backgroundColor: c.surface2,
             }}
           >
-            <Text style={{ color: c.ink, fontWeight: on ? '700' : '500' }}>{o.label}</Text>
+            <Text style={[type.body, { color: c.ink, fontWeight: on ? '700' : '400', textAlign: 'center' }]}>
+              {on ? '✓ ' : ''}
+              {o.label}
+            </Text>
           </Pressable>
         );
       })}
@@ -134,20 +157,19 @@ export function Input(props: TextInputProps & { label?: string }) {
   const { label, style, ...rest } = props;
   return (
     <View style={{ gap: space.xs, flex: 1 }}>
-      {label ? <Text style={{ color: c.ink, fontWeight: '600', fontSize: 14 }}>{label}</Text> : null}
+      {label ? <Text style={[type.caption, { color: c.muted }]}>{label}</Text> : null}
       <TextInput
         placeholderTextColor={c.muted}
+        accessibilityLabel={label}
         {...rest}
         style={[
+          type.number,
           {
             minHeight: 48,
-            borderWidth: 1.5,
-            borderColor: c.line,
-            borderRadius: radius.m,
+            borderRadius: radius.control,
             paddingHorizontal: space.m,
             color: c.ink,
-            backgroundColor: c.bg,
-            fontSize: 16,
+            backgroundColor: c.surface2,
           },
           style,
         ]}
@@ -161,14 +183,19 @@ export function Meter({ label, value, goal, unit }: { label: string; value: numb
   const c = useColors();
   const pct = goal > 0 ? Math.min(1, value / goal) : 0;
   return (
-    <View style={{ gap: space.xs }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text style={{ color: c.ink, fontWeight: '600' }}>{label}</Text>
-        <Text style={{ color: c.muted, fontVariant: ['tabular-nums'] }}>
+    <View
+      style={{ gap: space.xs }}
+      accessibilityRole="progressbar"
+      accessibilityLabel={label}
+      accessibilityValue={{ min: 0, max: goal, now: Math.round(value) }}
+    >
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: space.s }}>
+        <Text style={[type.headline, { color: c.ink }]}>{label}</Text>
+        <Text style={[type.body, { color: c.muted, fontVariant: ['tabular-nums'] }]}>
           {Math.round(value)} / {goal} {unit}
         </Text>
       </View>
-      <View style={{ height: 10, borderRadius: 5, backgroundColor: c.line, overflow: 'hidden' }}>
+      <View style={{ height: 8, borderRadius: radius.pill, backgroundColor: c.surface2, overflow: 'hidden' }}>
         <View style={{ width: `${pct * 100}%`, height: '100%', backgroundColor: c.accent }} />
       </View>
     </View>
@@ -178,10 +205,11 @@ export function Meter({ label, value, goal, unit }: { label: string; value: numb
 const styles = StyleSheet.create({
   button: {
     minHeight: 52,
-    borderRadius: radius.m,
-    borderWidth: 1.5,
+    borderRadius: radius.control,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: space.l,
+    paddingVertical: space.s,
   },
 });

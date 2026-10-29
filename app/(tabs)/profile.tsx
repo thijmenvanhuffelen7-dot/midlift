@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Lang } from '../../src/i18n';
 import { Activity, dailyGoals, FoodGoal } from '../../src/logic/nutrition';
 import { useStore } from '../../src/store';
-import { space, useColors } from '../../src/theme';
+import { space, ThemePref, useColors } from '../../src/theme';
 import { Body, Card, H2, Input, Label, Screen, Segmented, Title } from '../../src/ui';
 
 const num = (v: string, fallback: number) => {
@@ -29,6 +29,17 @@ export default function Profile() {
           options={[
             { value: 'en', label: 'English' },
             { value: 'nl', label: 'Nederlands' },
+          ]}
+        />
+
+        <Label>{t('profile.theme')}</Label>
+        <Segmented<ThemePref>
+          value={profile.theme}
+          onChange={(theme) => updateProfile({ theme })}
+          options={[
+            { value: 'system', label: t('profile.themeSystem') },
+            { value: 'dark', label: t('profile.themeDark') },
+            { value: 'light', label: t('profile.themeLight') },
           ]}
         />
       </Card>

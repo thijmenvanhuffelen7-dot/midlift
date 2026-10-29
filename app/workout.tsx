@@ -135,15 +135,15 @@ export default function WorkoutScreen() {
                     style={{
                       width: 48,
                       height: 48,
-                      borderRadius: radius.m,
+                      borderRadius: radius.control,
                       borderWidth: 1.5,
-                      borderColor: row.done ? c.ok : c.line,
-                      backgroundColor: row.done ? c.ok : 'transparent',
+                      borderColor: row.done ? c.done : c.line,
+                      backgroundColor: row.done ? c.doneSoft : c.surface2,
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <Text style={{ color: row.done ? c.surface : c.muted, fontSize: 20, fontWeight: '700' }}>✓</Text>
+                    <Text style={{ color: row.done ? c.done : c.muted, fontSize: 20, fontWeight: '700' }}>✓</Text>
                   </Pressable>
                 </View>
               ))}
@@ -162,19 +162,26 @@ export default function WorkoutScreen() {
             left: space.l,
             right: space.l,
             bottom: space.l + insets.bottom,
-            backgroundColor: c.forest,
-            borderRadius: radius.l,
+            backgroundColor: c.surface,
+            borderColor: c.line,
+            borderWidth: 1,
+            borderRadius: radius.card,
+            shadowColor: '#000',
+            shadowOpacity: 0.3,
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: 8,
             padding: space.l,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <Text style={{ color: c.forestInk, fontSize: 18, fontWeight: '700', fontVariant: ['tabular-nums'] }}>
+          <Text style={{ color: c.ink, fontSize: 18, fontWeight: '700', fontVariant: ['tabular-nums'] }}>
             {t('workout.rest')} {Math.floor(restLeft / 60)}:{String(restLeft % 60).padStart(2, '0')}
           </Text>
           <Pressable accessibilityRole="button" onPress={() => setRestLeft(0)} style={{ padding: space.s }}>
-            <Text style={{ color: c.forestInk, fontWeight: '700' }}>{t('workout.skipRest')}</Text>
+            <Text style={{ color: c.ink, fontWeight: '700' }}>{t('workout.skipRest')}</Text>
           </Pressable>
         </View>
       ) : null}

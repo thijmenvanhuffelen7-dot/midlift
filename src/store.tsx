@@ -2,9 +2,11 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n, { deviceLanguage, Lang } from './i18n';
 import type { Activity, FoodGoal } from './logic/nutrition';
+import type { ThemePref } from './data/palette';
 
 export type Profile = {
   lang: Lang;
+  theme: ThemePref;
   age: number;
   heightCm: number;
   weightKg: number;
@@ -24,6 +26,7 @@ const STORAGE_KEY = 'midlift.v1';
 const initialState: State = {
   profile: {
     lang: deviceLanguage(),
+    theme: 'dark',
     age: 50,
     heightCm: 168,
     weightKg: 70,

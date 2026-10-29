@@ -179,7 +179,7 @@ export default function Food() {
               accessibilityRole="button"
               accessibilityLabel={`Remove ${f.name}`}
               onPress={() => removeFood(f.id)}
-              style={{ padding: space.s, borderRadius: radius.s }}
+              style={{ padding: space.s, borderRadius: radius.control }}
             >
               <Text style={{ color: c.muted, fontSize: 18 }}>×</Text>
             </Pressable>

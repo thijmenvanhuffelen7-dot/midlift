@@ -5,6 +5,7 @@ import { STARTER_HOME, EXERCISES } from '../src/data/program';
 import { adaptWorkout, suggestWeight } from '../src/logic/adapt';
 import { dailyGoals, portion, CALORIE_FLOOR } from '../src/logic/nutrition';
 import { dayKey, isThisWeek, startOfWeek } from '../src/logic/dates';
+import { contrast, darkPalette, lightPalette, resolveScheme } from '../src/data/palette';
 
 const legs = STARTER_HOME.find((d) => d.id === 'legs')!;
 const pull = STARTER_HOME.find((d) => d.id === 'pull')!;
@@ -83,4 +84,29 @@ test('dates: week starts on Monday', () => {
   assert.equal(isThisWeek(new Date(2026, 9, 25, 23, 59).toISOString(), wed), false);
   const sun = new Date(2026, 10, 1, 12, 0); // Sun 1 Nov 2026
   assert.equal(dayKey(startOfWeek(sun)), '2026-10-26');
+});
+
+// --- Thema (DESIGN.md) ---
+
+test('theme: dark is the default, "system" follows the phone and falls back to dark', () => {
+  assert.equal(resolveScheme('dark', 'light'), 'dark');
+  assert.equal(resolveScheme('light', 'dark'), 'light');
+  assert.equal(resolveScheme('system', 'light'), 'light');
+  assert.equal(resolveScheme('system', 'dark'), 'dark');
+  assert.equal(resolveScheme('system', null), 'dark');
+});
+
+test('theme: text colours reach 4.5:1 on every background, in dark and light', () => {
+  for (const [name, p] of [['dark', darkPalette], ['light', lightPalette]] as const) {
+    for (const fg of ['ink', 'muted', 'accent'] as const) {
+      for (const bg of ['bg', 'surface', 'surface2', 'doneSoft'] as const) {
+        const r = contrast(p[fg], p[bg]);
+        assert.ok(r >= 4.5, `${name}: ${fg} on ${bg} is ${r.toFixed(2)}`);
+      }
+    }
+    assert.ok(contrast(p.accentInk, p.accent) >= 4.5, `${name}: accentInk on accent`);
+    assert.ok(contrast(p.warn, p.surface2) >= 4.5, `${name}: warm-up label on a set row`);
+    // Het vinkje is een icoon: 3:1 is genoeg.
+    assert.ok(contrast(p.done, p.doneSoft) >= 3, `${name}: check on a done row`);
+  }
 });

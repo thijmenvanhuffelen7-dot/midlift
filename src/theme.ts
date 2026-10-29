@@ -1,45 +1,43 @@
 import { useColorScheme } from 'react-native';
+import { Palette, paletteFor, resolveScheme, Scheme } from './data/palette';
+import { useStore } from './store';
 
-const light = {
-  bg: '#F4F5F2',
-  surface: '#FFFFFF',
-  ink: '#16231E',
-  muted: '#4E5B55',
-  line: '#D9DDD8',
-  accent: '#A3324F',
-  accentInk: '#FFFFFF',
-  accentSoft: '#F3E1E6',
-  forest: '#1F3A30',
-  forestInk: '#EEF2EE',
-  ok: '#2F6B4A',
-};
+export type Colors = Palette;
+export type { ThemePref, Scheme } from './data/palette';
 
-const dark: typeof light = {
-  bg: '#111916',
-  surface: '#18221E',
-  ink: '#E8EEEA',
-  muted: '#A3B0AA',
-  line: '#2C3934',
-  accent: '#E2728F',
-  accentInk: '#1A0B10',
-  accentSoft: '#3A1F27',
-  forest: '#1D2E27',
-  forestInk: '#E8EEEA',
-  ok: '#7BC59C',
-};
-
-export type Colors = typeof light;
-
-export function useColors(): Colors {
-  return useColorScheme() === 'dark' ? dark : light;
+/** Donker of licht, volgens de keuze in Profiel (Systeem / Donker / Licht). Standaard donker. */
+export function useScheme(): Scheme {
+  const system = useColorScheme();
+  const { profile } = useStore();
+  return resolveScheme(profile.theme, system);
 }
 
+export function useColors(): Colors {
+  return paletteFor(useScheme());
+}
+
+// 8-puntsraster; zijmarge is `l` (16).
 export const space = { xs: 4, s: 8, m: 12, l: 16, xl: 24, xxl: 32 };
-export const radius = { s: 8, m: 12, l: 16, pill: 999 };
+// Kaarten 12, knoppen en velden 10, chips volledig rond.
+export const radius = { card: 12, control: 10, pill: 999 };
+
+/**
+ * Typografieschaal uit DESIGN.md. Geen fontFamily: dat is het systeemfont (SF Pro / Roboto).
+ * Geen vaste regelhoogtes, zodat tekst meegroeit met grote systeemtekst.
+ */
 export const type = {
-  title: { fontSize: 28, fontWeight: '800' as const, letterSpacing: -0.5 },
-  h2: { fontSize: 20, fontWeight: '700' as const },
-  body: { fontSize: 16 },
-  small: { fontSize: 13 },
-  label: { fontSize: 12, fontWeight: '600' as const, letterSpacing: 0.8, textTransform: 'uppercase' as const },
+  largeTitle: { fontSize: 32, fontWeight: '800' as const, letterSpacing: -0.5 },
+  title: { fontSize: 22, fontWeight: '700' as const },
+  headline: { fontSize: 17, fontWeight: '600' as const },
+  body: { fontSize: 16, fontWeight: '400' as const },
+  number: { fontSize: 17, fontWeight: '600' as const, fontVariant: ['tabular-nums' as const] },
+  caption: { fontSize: 13, fontWeight: '600' as const, letterSpacing: 0.5, textTransform: 'uppercase' as const },
 };
+
+/**
+ * Bricolage Grotesque 800: alleen voor het logo, welkomstschermen en het afrondscherm.
+ * TODO: na `npx expo install expo-font @expo-google-fonts/bricolage-grotesque` het lettertype laden
+ * in app/_layout.tsx en hier `fontFamily: 'BricolageGrotesque_800ExtraBold'` toevoegen.
+ * Tot die tijd is dit het systeemfont in 800, zodat er geen onbekend lettertype gevraagd wordt.
+ */
+export const brandFont = { fontWeight: '800' as const };
