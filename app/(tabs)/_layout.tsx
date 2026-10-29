@@ -1,10 +1,10 @@
 import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
+import { ColorValue, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColors } from '../../src/theme';
 
 // Simple text glyphs keep this version free of icon libraries; swap for real icons later.
-const glyph = (g: string) => ({ color }: { color: string }) => <Text style={{ color, fontSize: 18 }}>{g}</Text>;
+const glyph = (g: string) => ({ color }: { color: ColorValue }) => <Text style={{ color, fontSize: 18 }}>{g}</Text>;
 
 export default function TabLayout() {
   const c = useColors();

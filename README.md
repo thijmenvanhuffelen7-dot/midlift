@@ -15,17 +15,18 @@ Alles wordt nu lokaal op de telefoon opgeslagen. Inloggen, Supabase en RevenueCa
 
 ## De app op je telefoon draaien
 
-1. Installeer **Node.js** (de LTS-versie) op je computer via nodejs.org.
+De app gebruikt **Expo SDK 58**. De Expo Go-app in de App Store en Google Play ondersteunt alleen de nieuwste SDK; zit je Expo Go op een andere versie, werk de app dan bij.
+
+1. Installeer **Node.js** (de LTS-versie, minimaal 22.13) op je computer via nodejs.org. Controleer met `node -v`.
 2. Installeer de app **Expo Go** op je iPhone of Android-telefoon.
-3. Pak deze map uit, open een terminal in de map en voer uit:
+3. Open een terminal in deze map en voer uit:
 
    ```
    npm install
-   npx expo install --fix
    npx expo start
    ```
 
-   `npx expo install --fix` zet alle Expo-pakketten op de juiste versie, ook als er inmiddels een nieuwere Expo-versie is. Wil je extra zekerheid, draai dan ook `npx expo-doctor`: dat meldt problemen en hoe je ze oplost.
+   Gaat er later iets mis met pakketversies, draai dan `npx expo install --fix` (zet alle Expo-pakketten op de juiste versie) en `npx expo-doctor` (meldt problemen en hoe je ze oplost).
 4. Scan de QR-code met je telefoon (iPhone: met de camera; Android: in Expo Go). De app opent.
 
 Zorg dat je computer en telefoon op hetzelfde wifi-netwerk zitten. Lukt dat niet, gebruik dan `npx expo start --tunnel`.
@@ -38,7 +39,7 @@ Zorg dat je computer en telefoon op hetzelfde wifi-netwerk zitten. Lukt dat niet
 
 ## Testen
 
-`npm test` controleert de belangrijkste regels van de app: het aanpassen van de training na de check-in, het gewichtsvoorstel, de voedingsdoelen en de datums.
+`npm run typecheck` controleert de hele app op typefouten. `npm test` controleert de belangrijkste regels van de app: het aanpassen van de training na de check-in, het gewichtsvoorstel, de voedingsdoelen en de datums.
 
 ## Mappen
 
