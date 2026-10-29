@@ -1,14 +1,35 @@
 {
-  "tabs": { "today": "Today", "food": "Food", "progress": "Progress", "profile": "Profile" },
-  "common": { "save": "Save", "cancel": "Cancel", "done": "Done", "kg": "kg", "reps": "reps", "sets": "sets", "min": "min", "g": "g", "kcal": "kcal" },
+  "tabs": {
+    "today": "Today",
+    "food": "Food",
+    "progress": "Progress",
+    "profile": "Profile"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "done": "Done",
+    "kg": "kg",
+    "reps": "reps",
+    "sets": "sets",
+    "min": "min",
+    "g": "g",
+    "kcal": "kcal",
+    "sec": "sec"
+  },
   "today": {
-    "greeting": "Ready to get stronger?",
     "thisWeek": "This week",
     "workoutsDone": "{{done}} of {{target}} workouts done",
     "nextWorkout": "Next workout",
     "start": "Start workout",
-    "minutes": "about {{count}} min",
-    "allDone": "All workouts for this week are done. Nice work. Rest, or repeat one you liked."
+    "minutes": "~{{count}} min",
+    "allDone": "All workouts for this week are done. Nice work. Rest, or repeat one you liked.",
+    "title": "Today",
+    "exercises_one": "{{count}} exercise",
+    "exercises_other": "{{count}} exercises",
+    "setsReps": "{{sets}} sets × {{reps}}",
+    "weekDone": "Week complete",
+    "adaptsHint": "A short check-in first, then your workout adapts to how you feel."
   },
   "checkin": {
     "title": "How do you feel today?",
@@ -16,9 +37,16 @@
     "energy": "Energy",
     "sleep": "Sleep last night",
     "pain": "Anything bothering you?",
-    "low": "Low", "medium": "Medium", "high": "Good",
-    "poor": "Poor", "ok": "Okay", "good": "Good",
-    "none": "No", "knee": "Knee", "back": "Back", "shoulder": "Shoulder",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "Good",
+    "poor": "Poor",
+    "ok": "Okay",
+    "good": "Good",
+    "none": "No",
+    "knee": "Knee",
+    "back": "Back",
+    "shoulder": "Shoulder",
     "continue": "Show my workout",
     "adjusted": "Adjusted for today",
     "noChanges": "No changes needed. Go for it.",
@@ -29,13 +57,21 @@
   "workout": {
     "set": "Set {{n}}",
     "last": "Last time: {{weight}} kg × {{reps}}",
-    "target": "Target: {{sets}} × {{reps}}",
+    "target": "{{sets}} sets × {{reps}}",
     "rest": "Rest",
     "skipRest": "Skip",
     "finish": "Finish workout",
     "finished": "Workout saved",
     "easier": "Easier option",
-    "suggestUp": "Last time went well. Try {{weight}} kg."
+    "suggestUp": "Last time went well: try {{weight}} kg",
+    "finishShort": "Finish",
+    "duration": "Duration",
+    "volume": "Volume",
+    "colSet": "SET",
+    "colPrevious": "PREVIOUS",
+    "markDone": "Mark set {{n}} done",
+    "sets": "Sets",
+    "colKg": "KG"
   },
   "food": {
     "title": "Food",
@@ -54,7 +90,8 @@
     "noResults": "No products found. Try another word or quick add.",
     "error": "Search didn't work. Check your connection and try again.",
     "source": "Product data from Open Food Facts",
-    "proteinTip": "Protein helps your muscles recover and grow. Spread it over your meals."
+    "proteinTip": "Protein helps your muscles recover and grow. Spread it over your meals.",
+    "remove": "Remove {{name}}"
   },
   "progress": {
     "title": "Progress",
@@ -63,7 +100,15 @@
     "total": "Total",
     "bestLifts": "Best lifts",
     "history": "History",
-    "empty": "Finish your first workout to see your progress here."
+    "empty": "Finish your first workout to see your progress here.",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "sets_one": "{{count}} set",
+    "sets_other": "{{count}} sets",
+    "lighter": "Lighter day",
+    "emptyTitle": "No workouts yet",
+    "toToday": "Go to your workout",
+    "volume": "Volume"
   },
   "profile": {
     "title": "Profile",

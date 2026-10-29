@@ -14,7 +14,15 @@ export type Profile = {
 };
 
 export type LoggedSet = { exerciseId: string; weight: number; reps: number };
-export type Session = { id: string; date: string; dayId: string; lighter: boolean; sets: LoggedSet[] };
+export type Session = {
+  id: string;
+  date: string;
+  dayId: string;
+  lighter: boolean;
+  sets: LoggedSet[];
+  /** workout length; missing on sessions saved before this was tracked */
+  durationSec?: number;
+};
 export type FoodEntry = { id: string; date: string; name: string; grams: number; kcal: number; protein: number };
 
 type State = { profile: Profile; sessions: Session[]; food: FoodEntry[] };

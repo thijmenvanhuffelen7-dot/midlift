@@ -1,17 +1,22 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { EXERCISES, PainArea, STARTER_HOME } from '../src/data/program';
-import { adaptWorkout, Level, suggestWeight } from '../src/logic/adapt';
+import { adaptWorkout, Change, Level, suggestWeight } from '../src/logic/adapt';
 import { lastSetsFor, LoggedSet, useStore } from '../src/store';
-import { radius, space, useColors } from '../src/theme';
-import { Body, Button, Card, H2, Input, Label, Screen } from '../src/ui';
+import { radius, space, type, useColors } from '../src/theme';
+import { Badge, Button, Icon, Screen, Small, Thumb } from '../src/ui';
 
 const REST_SECONDS = 60;
+const REST_STEP = 15;
 
 type Row = { weight: string; reps: string; done: boolean };
+
+const clock = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+const toNumber = (v: string) => Number(v.replace(',', '.')) || 0;
 
 export default function WorkoutScreen() {
   const { t } = useTranslation();
@@ -50,12 +55,25 @@ export default function WorkoutScreen() {
     return init;
   });
 
-  const [restLeft, setRestLeft] = useState(0);
+  // One clock drives both the workout duration and the rest timer.
+  const startedAt = useRef(Date.now());
+  const [now, setNow] = useState(Date.now());
+  const [restEndsAt, setRestEndsAt] = useState(0);
+  const [restTotal, setRestTotal] = useState(REST_SECONDS);
   useEffect(() => {
-    if (restLeft <= 0) return;
-    const id = setInterval(() => setRestLeft((s) => Math.max(0, s - 1)), 1000);
+    const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, [restLeft > 0]);
+  }, []);
+  const elapsed = Math.floor((now - startedAt.current) / 1000);
+  const restLeft = Math.max(0, Math.ceil((restEndsAt - now) / 1000));
+
+  const restWasRunning = useRef(false);
+  useEffect(() => {
+    if (restWasRunning.current && restLeft === 0) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    }
+    restWasRunning.current = restLeft > 0;
+  }, [restLeft]);
 
   const update = (exId: string, i: number, patch: Partial<Row>) =>
     setRows((r) => ({ ...r, [exId]: r[exId].map((row, j) => (j === i ? { ...row, ...patch } : row)) }));
@@ -63,121 +81,239 @@ export default function WorkoutScreen() {
   const toggleDone = (exId: string, i: number) => {
     const wasDone = rows[exId][i].done;
     update(exId, i, { done: !wasDone });
-    if (!wasDone) setRestLeft(REST_SECONDS);
+    if (!wasDone) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      setRestTotal(REST_SECONDS);
+      setRestEndsAt(Date.now() + REST_SECONDS * 1000);
+    }
   };
+
+  const adjustRest = (delta: number) => {
+    setRestEndsAt((end) => end + delta * 1000);
+    setRestTotal((tot) => Math.max(REST_STEP, tot + delta));
+  };
+
+  const allRows = adapted.items.flatMap((item) => rows[item.exerciseId]);
+  const doneCount = allRows.filter((r) => r.done).length;
+  const volume = adapted.items.reduce(
+    (sum, item) =>
+      sum +
+      (EXERCISES[item.exerciseId].loaded
+        ? rows[item.exerciseId].filter((r) => r.done).reduce((s, r) => s + toNumber(r.weight) * toNumber(r.reps), 0)
+        : 0),
+    0,
+  );
 
   const finish = () => {
     const sets: LoggedSet[] = [];
     for (const item of adapted.items) {
       for (const row of rows[item.exerciseId]) {
         if (!row.done) continue;
-        sets.push({
-          exerciseId: item.exerciseId,
-          weight: Number(row.weight.replace(',', '.')) || 0,
-          reps: Number(row.reps) || 0,
-        });
+        sets.push({ exerciseId: item.exerciseId, weight: toNumber(row.weight), reps: Math.round(toNumber(row.reps)) });
       }
     }
     if (sets.length > 0) {
-      addSession({ date: new Date().toISOString(), dayId: day.id, lighter: adapted.lighter, sets });
+      addSession({ date: new Date().toISOString(), dayId: day.id, lighter: adapted.lighter, sets, durationSec: elapsed });
     }
     router.back();
   };
 
+  const describe = (ch: Change) => {
+    if (ch.type === 'fewerSets') return t('checkin.fewerSets');
+    if (ch.type === 'lighter') return t('checkin.lighter');
+    return t('checkin.swapped', { from: t(`ex.${ch.from}`), to: t(`ex.${ch.to}`) });
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <Stack.Screen
+        options={{
+          title: t(`days.${day.id}`),
+          headerRight: () => <Button compact title={t('workout.finishShort')} onPress={finish} />,
+        }}
+      />
+
+      {/* Duration, volume and sets, like the summary bar of a logger. */}
+      <View style={[styles.stats, { borderBottomColor: c.line }]}>
+        {[
+          { label: t('workout.duration'), value: clock(elapsed), color: c.accent },
+          { label: t('workout.volume'), value: `${Math.round(volume)} kg`, color: c.ink },
+          { label: t('workout.sets'), value: `${doneCount}/${allRows.length}`, color: c.ink },
+        ].map((s) => (
+          <View key={s.label} style={{ flex: 1, gap: 2 }}>
+            <Text style={[type.footnote, { color: c.muted }]}>{s.label}</Text>
+            <Text style={[type.headline, { color: s.color, fontVariant: ['tabular-nums'] }]}>{s.value}</Text>
+          </View>
+        ))}
+      </View>
+
       <Screen safeTop={false}>
-        <H2>{t(`days.${day.id}`)}</H2>
+        {adapted.changes.length > 0 ? (
+          <View style={{ backgroundColor: c.warnSoft, borderRadius: radius.m, padding: space.m, gap: space.xs }}>
+            <Badge tone="warn" icon="sparkles" label={t('checkin.adjusted')} />
+            {adapted.changes.map((ch, i) => (
+              <Small key={i} muted={false}>
+                {describe(ch)}
+              </Small>
+            ))}
+          </View>
+        ) : null}
 
         {adapted.items.map((item) => {
           const ex = EXERCISES[item.exerciseId];
           const last = lastSetsFor(sessions, item.exerciseId);
-          const top = last ? last.reduce((a, b) => (b.weight > a.weight ? b : a)) : undefined;
           const suggestion = suggestWeight(last, item.target, adapted.lighter);
+          const unit = ex.kind === 'time' ? t('common.sec') : t('common.reps');
           return (
-            <Card key={item.exerciseId}>
-              <H2>{t(`ex.${item.exerciseId}`)}</H2>
-              <Body muted>
-                {t('workout.target', { sets: item.sets, reps: `${item.target}${ex.kind === 'time' ? ' s' : ''}` })}
-              </Body>
-              {ex.loaded && top && top.weight > 0 ? (
-                <Body muted>{t('workout.last', { weight: top.weight, reps: top.reps })}</Body>
+            <View key={item.exerciseId} style={{ gap: space.m }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.m }}>
+                <Thumb size={44} />
+                <View style={{ flex: 1, gap: 2 }}>
+                  <Text style={[type.headline, { color: c.accent }]}>{t(`ex.${item.exerciseId}`)}</Text>
+                  <Small>{t('workout.target', { sets: item.sets, reps: `${item.target} ${unit}` })}</Small>
+                </View>
+              </View>
+
+              {suggestion && !adapted.lighter ? (
+                <Badge icon="trending-up" label={t('workout.suggestUp', { weight: suggestion })} />
               ) : null}
-              {suggestion && !adapted.lighter ? <Label accent>{t('workout.suggestUp', { weight: suggestion })}</Label> : null}
               {ex.easier ? (
-                <Body muted>
+                <Small>
                   {t('workout.easier')}: {t(`ex.${ex.easier}`)}
-                </Body>
+                </Small>
               ) : null}
 
-              {rows[item.exerciseId].map((row, i) => (
-                <View key={i} style={{ flexDirection: 'row', alignItems: 'flex-end', gap: space.s }}>
-                  <Text style={{ color: c.muted, width: 48, paddingBottom: 14 }}>{t('workout.set', { n: i + 1 })}</Text>
-                  {ex.loaded ? (
-                    <Input
-                      label={t('common.kg')}
-                      keyboardType="decimal-pad"
-                      value={row.weight}
-                      onChangeText={(v) => update(item.exerciseId, i, { weight: v })}
-                    />
-                  ) : null}
-                  <Input
-                    label={ex.kind === 'time' ? 's' : t('common.reps')}
-                    keyboardType="number-pad"
-                    value={row.reps}
-                    onChangeText={(v) => update(item.exerciseId, i, { reps: v })}
-                  />
-                  <Pressable
-                    accessibilityRole="checkbox"
-                    accessibilityState={{ checked: row.done }}
-                    accessibilityLabel={t('workout.set', { n: i + 1 })}
-                    onPress={() => toggleDone(item.exerciseId, i)}
-                    style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: radius.m,
-                      borderWidth: 1.5,
-                      borderColor: row.done ? c.ok : c.line,
-                      backgroundColor: row.done ? c.ok : 'transparent',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Text style={{ color: row.done ? c.surface : c.muted, fontSize: 20, fontWeight: '700' }}>✓</Text>
-                  </Pressable>
+              <View>
+                <View style={styles.tableRow}>
+                  <Text style={[styles.colSet, styles.head, { color: c.muted }]}>{t('workout.colSet')}</Text>
+                  <Text style={[styles.colPrev, styles.head, { color: c.muted }]}>{t('workout.colPrevious')}</Text>
+                  {ex.loaded ? <Text style={[styles.colNum, styles.head, { color: c.muted }]}>{t('workout.colKg')}</Text> : null}
+                  <Text style={[styles.colNum, styles.head, { color: c.muted }]}>{unit.toUpperCase()}</Text>
+                  <View style={styles.colCheck}>
+                    <Icon name="checkmark" size={16} color={c.muted} />
+                  </View>
                 </View>
-              ))}
-            </Card>
+
+                {rows[item.exerciseId].map((row, i) => {
+                  const prev = last?.[i];
+                  const prevText = prev ? (ex.loaded && prev.weight > 0 ? `${prev.weight} kg × ${prev.reps}` : `${prev.reps}`) : '–';
+                  const cell = [styles.cell, { backgroundColor: row.done ? 'transparent' : c.fill, color: c.ink }];
+                  return (
+                    <View
+                      key={i}
+                      style={[styles.tableRow, { backgroundColor: row.done ? c.okSoft : 'transparent', borderRadius: radius.s }]}
+                    >
+                      <Text style={[styles.colSet, { color: c.ink, fontWeight: '700', fontSize: 16 }]}>{i + 1}</Text>
+                      <Text style={[styles.colPrev, { color: c.muted, fontSize: 14 }]} numberOfLines={1}>
+                        {prevText}
+                      </Text>
+                      {ex.loaded ? (
+                        <View style={styles.colNum}>
+                          <TextInput
+                            accessibilityLabel={`${t('workout.set', { n: i + 1 })} kg`}
+                            keyboardType="decimal-pad"
+                            selectTextOnFocus
+                            selectionColor={c.accent}
+                            placeholder="0"
+                            placeholderTextColor={c.muted}
+                            value={row.weight}
+                            onChangeText={(v) => update(item.exerciseId, i, { weight: v })}
+                            style={cell}
+                          />
+                        </View>
+                      ) : null}
+                      <View style={styles.colNum}>
+                        <TextInput
+                          accessibilityLabel={`${t('workout.set', { n: i + 1 })} ${unit}`}
+                          keyboardType="number-pad"
+                          selectTextOnFocus
+                          selectionColor={c.accent}
+                          value={row.reps}
+                          onChangeText={(v) => update(item.exerciseId, i, { reps: v })}
+                          style={cell}
+                        />
+                      </View>
+                      <View style={styles.colCheck}>
+                        <Pressable
+                          accessibilityRole="checkbox"
+                          accessibilityState={{ checked: row.done }}
+                          accessibilityLabel={t('workout.markDone', { n: i + 1 })}
+                          hitSlop={6}
+                          onPress={() => toggleDone(item.exerciseId, i)}
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: radius.s,
+                            backgroundColor: row.done ? c.ok : c.fill,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Icon name="checkmark" size={20} color={row.done ? c.okInk : c.muted} />
+                        </Pressable>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
           );
         })}
 
-        <Button title={t('workout.finish')} onPress={finish} />
-        <View style={{ height: restLeft > 0 ? 80 : 0 }} />
+        <Button title={t('workout.finish')} icon="flag" onPress={finish} />
+        <View style={{ height: restLeft > 0 ? 120 : 0 }} />
       </Screen>
 
       {restLeft > 0 ? (
         <View
-          style={{
-            position: 'absolute',
-            left: space.l,
-            right: space.l,
-            bottom: space.l + insets.bottom,
-            backgroundColor: c.forest,
-            borderRadius: radius.l,
-            padding: space.l,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
+          accessibilityLiveRegion="polite"
+          style={[styles.rest, { backgroundColor: c.surface, borderTopColor: c.line, paddingBottom: space.m + insets.bottom }]}
         >
-          <Text style={{ color: c.forestInk, fontSize: 18, fontWeight: '700', fontVariant: ['tabular-nums'] }}>
-            {t('workout.rest')} {Math.floor(restLeft / 60)}:{String(restLeft % 60).padStart(2, '0')}
-          </Text>
-          <Pressable accessibilityRole="button" onPress={() => setRestLeft(0)} style={{ padding: space.s }}>
-            <Text style={{ color: c.forestInk, fontWeight: '700' }}>{t('workout.skipRest')}</Text>
-          </Pressable>
+          <View style={{ height: 4, backgroundColor: c.fill }}>
+            <View style={{ height: 4, width: `${Math.min(1, restLeft / restTotal) * 100}%`, backgroundColor: c.accent }} />
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.l, paddingTop: space.m, gap: space.s }}>
+            <View style={{ flex: 1 }}>
+              <Text style={[type.footnote, { color: c.muted }]}>{t('workout.rest')}</Text>
+              <Text style={{ color: c.ink, fontSize: 28, fontWeight: '800', fontVariant: ['tabular-nums'] }}>{clock(restLeft)}</Text>
+            </View>
+            <Button compact variant="secondary" title={`−${REST_STEP}`} onPress={() => adjustRest(-REST_STEP)} />
+            <Button compact variant="secondary" title={`+${REST_STEP}`} onPress={() => adjustRest(REST_STEP)} />
+            <Button compact title={t('workout.skipRest')} onPress={() => setRestEndsAt(0)} />
+          </View>
         </View>
       ) : null}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  stats: {
+    flexDirection: 'row',
+    paddingHorizontal: space.l,
+    paddingVertical: space.m,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  tableRow: { flexDirection: 'row', alignItems: 'center', gap: space.s, minHeight: 48, paddingHorizontal: space.xs },
+  head: { fontSize: 12, fontWeight: '700', letterSpacing: 0.4 },
+  colSet: { width: 32, textAlign: 'center' },
+  colPrev: { flex: 1.5 },
+  colNum: { flex: 1, alignItems: 'stretch' },
+  colCheck: { width: 40, alignItems: 'center' },
+  cell: {
+    minHeight: 36,
+    borderRadius: 8,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    paddingVertical: 4,
+    fontVariant: ['tabular-nums'],
+  },
+  rest: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+});

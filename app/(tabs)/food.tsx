@@ -5,8 +5,8 @@ import { FoodProduct, searchFood } from '../../src/data/openFoodFacts';
 import { dayKey } from '../../src/logic/dates';
 import { dailyGoals, portion } from '../../src/logic/nutrition';
 import { useStore } from '../../src/store';
-import { radius, space, useColors } from '../../src/theme';
-import { Body, Button, Card, H2, Input, Label, Meter, Screen, Title } from '../../src/ui';
+import { space, type, useColors } from '../../src/theme';
+import { Button, Card, Divider, Icon, Input, Meter, Row, Screen, Section, Small } from '../../src/ui';
 
 export default function Food() {
   const { t } = useTranslation();
@@ -73,77 +73,74 @@ export default function Food() {
   };
 
   return (
-    <Screen>
-      <Title>{t('food.title')}</Title>
-
-      <Card>
+    <Screen title={t('food.title')}>
+      <Card style={{ gap: space.l }}>
         <Meter label={t('food.protein')} value={totals.protein} goal={goals.protein} unit={t('common.g')} />
         {!profile.hideCalories ? (
-          <Meter label={t('food.calories')} value={totals.kcal} goal={goals.calories} unit={t('common.kcal')} />
+          <Meter label={t('food.calories')} value={totals.kcal} goal={goals.calories} unit={t('common.kcal')} color={c.muted} />
         ) : null}
-        <Body muted>{t('food.proteinTip')}</Body>
+        <View style={{ flexDirection: 'row', gap: space.s }}>
+          <Icon name="information-circle-outline" size={18} color={c.muted} />
+          <Small style={{ flex: 1 }}>{t('food.proteinTip')}</Small>
+        </View>
       </Card>
 
-      <Card>
-        <H2>{t('food.search')}</H2>
-        <View style={{ flexDirection: 'row', gap: space.s, alignItems: 'flex-end' }}>
-          <Input
-            value={query}
-            onChangeText={setQuery}
-            placeholder={t('food.searchPlaceholder')}
-            returnKeyType="search"
-            onSubmitEditing={runSearch}
-          />
-          <View style={{ width: 110 }}>
-            <Button title={t('food.search')} onPress={runSearch} variant="secondary" />
-          </View>
-        </View>
+      <Section title={t('food.search')}>
+        <Input
+          icon="search"
+          value={query}
+          onChangeText={setQuery}
+          placeholder={t('food.searchPlaceholder')}
+          returnKeyType="search"
+          onSubmitEditing={runSearch}
+          accessibilityLabel={t('food.search')}
+        />
 
         {loading ? <ActivityIndicator color={c.accent} /> : null}
-        {error ? <Body muted>{t('food.error')}</Body> : null}
-        {results && results.length === 0 ? <Body muted>{t('food.noResults')}</Body> : null}
+        {error ? <Small>{t('food.error')}</Small> : null}
+        {results && results.length === 0 ? <Small>{t('food.noResults')}</Small> : null}
 
         {picked ? (
-          <View style={{ gap: space.s }}>
-            <Body style={{ fontWeight: '700' }}>{picked.name}</Body>
-            <Body muted>
-              {t('food.per100')}: {Math.round(picked.kcal100)} {t('common.kcal')} · {picked.protein100} {t('common.g')}{' '}
-              {t('food.protein').toLowerCase()}
-            </Body>
-            <View style={{ flexDirection: 'row', gap: space.s, alignItems: 'flex-end' }}>
-              <Input label={t('food.amount')} keyboardType="decimal-pad" value={grams} onChangeText={setGrams} />
-              <View style={{ width: 120 }}>
-                <Button title={t('food.add')} onPress={addPicked} />
-              </View>
+          <Card>
+            <View style={{ gap: 2 }}>
+              <Text style={[type.headline, { color: c.ink }]}>{picked.name}</Text>
+              <Small>
+                {t('food.per100')}: {Math.round(picked.kcal100)} {t('common.kcal')} · {picked.protein100} {t('common.g')}{' '}
+                {t('food.protein').toLowerCase()}
+              </Small>
             </View>
+            <View style={{ flexDirection: 'row', gap: space.s, alignItems: 'flex-end' }}>
+              <View style={{ flex: 1 }}>
+                <Input
+                  label={t('food.amount')}
+                  keyboardType="decimal-pad"
+                  value={grams}
+                  onChangeText={setGrams}
+                />
+              </View>
+              <Button title={t('food.add')} icon="add" onPress={addPicked} />
+            </View>
+            <Button variant="plain" compact title={t('common.cancel')} onPress={() => setPicked(null)} />
+          </Card>
+        ) : results && results.length > 0 ? (
+          <View>
+            {results.slice(0, 12).map((p, i) => (
+              <View key={p.code + p.name}>
+                {i > 0 ? <Divider /> : null}
+                <Row
+                  title={p.name}
+                  subtitle={`${p.brand ? `${p.brand} · ` : ''}${Math.round(p.kcal100)} ${t('common.kcal')} · ${p.protein100} ${t('common.g')} ${t('food.protein').toLowerCase()} / 100 g`}
+                  trailing={<Icon name="add-circle" size={26} color={c.accent} />}
+                  onPress={() => setPicked(p)}
+                />
+              </View>
+            ))}
           </View>
-        ) : (
-          results?.slice(0, 12).map((p) => (
-            <Pressable
-              key={p.code + p.name}
-              accessibilityRole="button"
-              onPress={() => setPicked(p)}
-              style={({ pressed }) => ({
-                paddingVertical: space.s,
-                borderTopWidth: 1,
-                borderTopColor: c.line,
-                opacity: pressed ? 0.6 : 1,
-              })}
-            >
-              <Text style={{ color: c.ink, fontWeight: '600' }}>{p.name}</Text>
-              <Text style={{ color: c.muted, fontSize: 13 }}>
-                {p.brand ? `${p.brand} · ` : ''}
-                {Math.round(p.kcal100)} {t('common.kcal')} · {p.protein100} {t('common.g')} {t('food.protein').toLowerCase()} /
-                100 g
-              </Text>
-            </Pressable>
-          ))
-        )}
-        <Text style={{ color: c.muted, fontSize: 12 }}>{t('food.source')}</Text>
-      </Card>
+        ) : null}
+        <Text style={[type.footnote, { color: c.muted }]}>{t('food.source')}</Text>
+      </Section>
 
-      <Card>
-        <H2>{t('food.quickAdd')}</H2>
+      <Section title={t('food.quickAdd')}>
         <Input label={t('food.name')} value={qName} onChangeText={setQName} />
         <View style={{ flexDirection: 'row', gap: space.s }}>
           {!profile.hideCalories ? (
@@ -156,36 +153,40 @@ export default function Food() {
             onChangeText={setQProtein}
           />
         </View>
-        <Button title={t('food.add')} onPress={addQuick} variant="secondary" />
-      </Card>
+        <Button title={t('food.add')} icon="add" variant="secondary" onPress={addQuick} disabled={!qName.trim()} />
+      </Section>
 
-      <Card>
-        <Label>{t('food.today')}</Label>
-        {todays.length === 0 ? <Body muted>{t('food.empty')}</Body> : null}
-        {todays.map((f) => (
-          <View
-            key={f.id}
-            style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: space.s }}
-          >
-            <View style={{ flex: 1 }}>
-              <Text style={{ color: c.ink, fontWeight: '600' }}>{f.name}</Text>
-              <Text style={{ color: c.muted, fontSize: 13 }}>
-                {f.grams > 0 ? `${f.grams} g · ` : ''}
-                {!profile.hideCalories ? `${f.kcal} ${t('common.kcal')} · ` : ''}
-                {f.protein} {t('common.g')} {t('food.protein').toLowerCase()}
-              </Text>
-            </View>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`Remove ${f.name}`}
-              onPress={() => removeFood(f.id)}
-              style={{ padding: space.s, borderRadius: radius.s }}
-            >
-              <Text style={{ color: c.muted, fontSize: 18 }}>×</Text>
-            </Pressable>
+      <Section title={t('food.today')} trailing={todays.length ? `${Math.round(totals.protein)} ${t('common.g')} ${t('food.protein').toLowerCase()}` : undefined}>
+        {todays.length === 0 ? (
+          <View style={{ alignItems: 'center', gap: space.s, paddingVertical: space.l }}>
+            <Icon name="restaurant-outline" size={28} color={c.muted} />
+            <Small style={{ textAlign: 'center' }}>{t('food.empty')}</Small>
           </View>
-        ))}
-      </Card>
+        ) : (
+          <View>
+            {todays.map((f, i) => (
+              <View key={f.id}>
+                {i > 0 ? <Divider /> : null}
+                <Row
+                  title={f.name}
+                  subtitle={`${f.grams > 0 ? `${f.grams} g · ` : ''}${!profile.hideCalories ? `${f.kcal} ${t('common.kcal')} · ` : ''}${f.protein} ${t('common.g')} ${t('food.protein').toLowerCase()}`}
+                  trailing={
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={t('food.remove', { name: f.name })}
+                      onPress={() => removeFood(f.id)}
+                      hitSlop={8}
+                      style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <Icon name="trash-outline" size={20} color={c.muted} />
+                    </Pressable>
+                  }
+                />
+              </View>
+            ))}
+          </View>
+        )}
+      </Section>
     </Screen>
   );
 }

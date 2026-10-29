@@ -1,14 +1,35 @@
 {
-  "tabs": { "today": "Vandaag", "food": "Voeding", "progress": "Voortgang", "profile": "Profiel" },
-  "common": { "save": "Opslaan", "cancel": "Annuleren", "done": "Klaar", "kg": "kg", "reps": "herh.", "sets": "sets", "min": "min", "g": "g", "kcal": "kcal" },
+  "tabs": {
+    "today": "Vandaag",
+    "food": "Voeding",
+    "progress": "Voortgang",
+    "profile": "Profiel"
+  },
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "done": "Klaar",
+    "kg": "kg",
+    "reps": "herh.",
+    "sets": "sets",
+    "min": "min",
+    "g": "g",
+    "kcal": "kcal",
+    "sec": "sec"
+  },
   "today": {
-    "greeting": "Klaar om sterker te worden?",
     "thisWeek": "Deze week",
     "workoutsDone": "{{done}} van {{target}} trainingen gedaan",
     "nextWorkout": "Volgende training",
     "start": "Start training",
-    "minutes": "ongeveer {{count}} min",
-    "allDone": "Alle trainingen van deze week zijn klaar. Goed gedaan. Rust uit, of herhaal er een die je fijn vond."
+    "minutes": "± {{count}} min",
+    "allDone": "Alle trainingen van deze week zijn klaar. Goed gedaan. Rust uit, of herhaal er een die je fijn vond.",
+    "title": "Vandaag",
+    "exercises_one": "{{count}} oefening",
+    "exercises_other": "{{count}} oefeningen",
+    "setsReps": "{{sets}} sets × {{reps}}",
+    "weekDone": "Week compleet",
+    "adaptsHint": "Eerst een korte check-in, dan past je training zich aan op hoe je je voelt."
   },
   "checkin": {
     "title": "Hoe voel je je vandaag?",
@@ -16,9 +37,16 @@
     "energy": "Energie",
     "sleep": "Slaap vannacht",
     "pain": "Ergens last van?",
-    "low": "Laag", "medium": "Gemiddeld", "high": "Goed",
-    "poor": "Slecht", "ok": "Oké", "good": "Goed",
-    "none": "Nee", "knee": "Knie", "back": "Rug", "shoulder": "Schouder",
+    "low": "Laag",
+    "medium": "Gemiddeld",
+    "high": "Goed",
+    "poor": "Slecht",
+    "ok": "Oké",
+    "good": "Goed",
+    "none": "Nee",
+    "knee": "Knie",
+    "back": "Rug",
+    "shoulder": "Schouder",
     "continue": "Toon mijn training",
     "adjusted": "Aangepast voor vandaag",
     "noChanges": "Geen aanpassingen nodig. Zet 'm op.",
@@ -29,13 +57,21 @@
   "workout": {
     "set": "Set {{n}}",
     "last": "Vorige keer: {{weight}} kg × {{reps}}",
-    "target": "Doel: {{sets}} × {{reps}}",
+    "target": "{{sets}} sets × {{reps}}",
     "rest": "Rust",
     "skipRest": "Overslaan",
     "finish": "Training afronden",
     "finished": "Training opgeslagen",
     "easier": "Makkelijkere variant",
-    "suggestUp": "Vorige keer ging goed. Probeer {{weight}} kg."
+    "suggestUp": "Vorige keer ging goed: probeer {{weight}} kg",
+    "finishShort": "Klaar",
+    "duration": "Duur",
+    "volume": "Volume",
+    "colSet": "SET",
+    "colPrevious": "VORIGE",
+    "markDone": "Set {{n}} afvinken",
+    "sets": "Sets",
+    "colKg": "KG"
   },
   "food": {
     "title": "Voeding",
@@ -54,7 +90,8 @@
     "noResults": "Geen producten gevonden. Probeer een ander woord of voeg snel toe.",
     "error": "Zoeken lukte niet. Controleer je internetverbinding en probeer het opnieuw.",
     "source": "Productgegevens van Open Food Facts",
-    "proteinTip": "Eiwit helpt je spieren herstellen en groeien. Verdeel het over je maaltijden."
+    "proteinTip": "Eiwit helpt je spieren herstellen en groeien. Verdeel het over je maaltijden.",
+    "remove": "{{name}} verwijderen"
   },
   "progress": {
     "title": "Voortgang",
@@ -63,7 +100,15 @@
     "total": "Totaal",
     "bestLifts": "Beste prestaties",
     "history": "Geschiedenis",
-    "empty": "Rond je eerste training af om hier je voortgang te zien."
+    "empty": "Rond je eerste training af om hier je voortgang te zien.",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "sets_one": "{{count}} set",
+    "sets_other": "{{count}} sets",
+    "lighter": "Lichtere dag",
+    "emptyTitle": "Nog geen trainingen",
+    "toToday": "Naar je training",
+    "volume": "Volume"
   },
   "profile": {
     "title": "Profiel",

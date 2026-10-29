@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-29T13:00:00Z",
+  "title": "Design System: Midlift",
+  "extensions": {
+    "colorMeta": {
+      "accent": { "role": "primary", "displayName": "Action Blue" },
+      "ok": { "role": "secondary", "displayName": "Done Green" },
+      "warn": { "role": "tertiary", "displayName": "Adjusted Amber" },
+      "fill": { "role": "neutral", "displayName": "Cell Grey" }
+    },
+    "shadows": [{ "name": "segment-lift", "value": "0 1px 4px rgba(0,0,0,0.08)", "purpose": "Selected segment in a segmented control only." }]
+  },
+  "components": [
+    { "name": "Primary Button", "kind": "button", "refersTo": "button-primary", "description": "The one blue action on a screen.", "html": "<button class=\"ds-btn\">Start training</button>", "css": ".ds-btn{background:#1F64E6;color:#fff;font:700 17px system-ui;border:0;border-radius:12px;height:52px;padding:0 16px;width:100%}.ds-btn:active{opacity:.8}.ds-btn:focus-visible{outline:2px solid #1F64E6;outline-offset:2px}" },
+    { "name": "Chip", "kind": "chip", "refersTo": "chip", "description": "Single choice on the check-in.", "html": "<span class=\"ds-chip\">Medium</span> <span class=\"ds-chip ds-on\">Low</span>", "css": ".ds-chip{display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:999px;background:#F1F2F4;color:#0E0F12;font:600 16px system-ui}.ds-on{background:#1F64E6;color:#fff}" },
+    { "name": "Set row (done)", "kind": "custom", "refersTo": "set-row-done", "description": "Completed set in the set table.", "html": "<div class=\"ds-row\"><b>1</b><span>8 kg × 10</span><span>8</span><span>10</span><i>✓</i></div>", "css": ".ds-row{display:grid;grid-template-columns:32px 1.5fr 1fr 1fr 40px;align-items:center;height:48px;border-radius:8px;background:#E3F5E9;font:16px system-ui;color:#0E0F12}.ds-row i{background:#15803D;color:#fff;border-radius:8px;width:36px;height:36px;display:grid;place-items:center;font-style:normal}" }
+  ],
+  "narrative": {
+    "northStar": "A serious logger that shows how today adapts",
+    "keyCharacteristics": ["White / near-black grounds", "Grey filled cells", "One blue for actions", "Green = done, amber = adapted"],
+    "rules": [
+      { "name": "One blue", "body": "Every primary action is blue; blue is never decoration.", "section": "colors" },
+      { "name": "Amber means adapted", "body": "Amber appears only where the check-in changed the workout.", "section": "colors" },
+      { "name": "No eyebrows", "body": "Nothing above a heading.", "section": "typography" }
+    ],
+    "dos": ["Use src/ui.tsx components and useColors()", "Ionicons for every icon", "Test light and dark"],
+    "donts": ["No glyph or emoji icons", "No nested cards", "No wrapped labels in a segmented control"]
+  }
+}
